@@ -1,0 +1,15 @@
+<?php
+require_once 'utils.php';
+
+$data = json_decode(file_get_contents('php://input'), true);
+$phone = $data['phone'] ?? '';
+$type = $data['type'] ?? 'customer';
+
+if (!$phone || strlen($phone) != 10) {
+  respond(false, "Invalid phone number");
+}
+
+$otp = generateOTP();
+saveOTP($phone, $otp, $type);
+
+respond(true, "OTP sent", ['otp' => $otp]); // real life: OTP hide karna chahiye

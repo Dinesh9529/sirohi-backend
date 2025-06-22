@@ -1,0 +1,9 @@
+<?php
+require_once 'utils.php';
+
+$data = json_decode(file_get_contents('php://input'), true);
+$phone = $data['phone'] ?? '';
+$entered = $data['otp'] ?? '';
+
+$valid = verifyOTP($phone, $entered);
+respond($valid, $valid ? "OTP verified" : "Wrong OTP");
