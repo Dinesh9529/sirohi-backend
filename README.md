@@ -1,2 +1,0 @@
-# sirohi-backend
-sirohi-backend
