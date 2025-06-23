@@ -1,0 +1,2934 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sirohi Services - Multi-Vendor Platform</title>
+<link rel="stylesheet" href="style.css" />
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+        * { font-family: 'Poppins', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover:hover { transform: translateY(-5px); transition: all 0.3s ease; }
+        .plan-card { background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); }
+        .premium-plan { background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%); color: white; }
+        .business-plan { background: linear-gradient(145deg, #3b82f6 0%, #1e40af 100%); color: white; }
+        .hide { display: none; }
+        .show { display: block; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .sidebar { transition: transform 0.3s ease; }
+        .sidebar-hidden { transform: translateX(-100%); }
+        .notification { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-align: center;
+            color: #666;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmZmZmZiIvPgogIDwhLS0gUVIgQ29kZSBQYXR0ZXJuIC0tPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iIzAwMDAwMCIvPgogIDxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZmZmZmZmIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiMwMDAwMDAiLz4KICA8cmVjdCB4PSIxNDAiIHk9IjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iIzAwMDAwMCIvPgogIDxyZWN0IHg9IjE1MCIgeT0iMTAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjE2MCIgeT0iMjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iIzAwMDAwMCIvPgogIDxyZWN0IHg9IjAiIHk9IjE0MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjMDAwMDAwIi8+CiAgPHJlY3QgeD0iMTAiIHk9IjE1MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZmZmZmZmIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjE2MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMDAwMDAwIi8+CiAgPCEtLSBEYXRhIFBhdHRlcm4gLS0+CiAgPHJlY3QgeD0iODAiIHk9IjIwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiMwMDAwMDAiLz4KICA8cmVjdCB4PSIxMDAiIHk9IjIwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiMwMDAwMDAiLz4KICA8cmVjdCB4PSIxMjAiIHk9IjIwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiMwMDAwMDAiLz4KICA8cmVjdCB4PSI4MCIgeT0iNDAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgZmlsbD0iIzAwMDAwMCIvPgogIDxyZWN0IHg9IjEwMCIgeT0iNDAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgZmlsbD0iIzAwMDAwMCIvPgogIDxyZWN0IHg9IjgwIiB5PSI4MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjMDAwMDAwIi8+CiAgPHJlY3QgeD0iMTAwIiB5PSI4MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjMDAwMDAwIi8+CiAgPHJlY3QgeD0iMTIwIiB5PSI4MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjMDAwMDAwIi8+CiAgPHJlY3QgeD0iMTQwIiB5PSI4MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjMDAwMDAwIi8+CiAgPHJlY3QgeD0iMTYwIiB5PSI4MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjMDAwMDAwIi8+CiAgPHJlY3QgeD0iMTgwIiB5PSI4MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjMDAwMDAwIi8+Cjwvc3ZnPgo=');
+        }
+        .payment-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            margin: 20px 0;
+        }
+        .upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background-color: #f8fafc;
+        }
+        .upload-area.drag-over {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .error { border-color: #ef4444 !important; background-color: #fef2f2; }
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+            border-left: 4px solid #3b82f6;
+        }
+        .status-pending { border-left-color: #f59e0b; }
+        .status-confirmed { border-left-color: #10b981; }
+        .status-delivered { border-left-color: #6b7280; }
+        .status-rejected { border-left-color: #ef4444; }
+        .dashboard-stats {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .vendor-dashboard-stats {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .vendor-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        .vendor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        /* Service Cards Styling */
+        .services-grid .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .services-grid .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .services-grid .card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 0 auto 15px auto;
+            display: block;
+        }
+
+        .services-grid .card p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            margin: 10px 0 15px 0;
+            line-height: 1.4;
+        }
+
+        .services-grid .card a {
+            display: inline-block;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(37, 211, 102, 0.3);
+        }
+
+        .services-grid .card a:hover {
+            background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .services-grid .card {
+                padding: 15px;
+            }
+
+            .services-grid .card img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .services-grid .card p {
+                font-size: 14px;
+            }
+
+            .services-grid .card a {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .services-grid .card a {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+        }
+    </style>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="otp-script.js" defer></script>
+</head>
+<body class="bg-gray-50">
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-4">
+<div class="flex justify-between items-center py-4">
+<div class="flex items-center space-x-2">
+<i class="fas fa-tools text-2xl text-blue-600"></i>
+<span class="text-2xl font-bold text-gray-800">Sirohi Services</span>
+<input type="text" id="phone" placeholder="Enter mobile number">
+<button onclick="sendOtp()">Send OTP</button>
+
+</div>
+<div class="hidden md:flex items-center space-x-6">
+<a class="text-gray-600 hover:text-blue-600" href="#" onclick="showView('home')">होम</a>
+<a class="text-gray-600 hover:text-blue-600" href="#" onclick="showView('services')">सेवाएं</a>
+<a class="text-gray-600 hover:text-blue-600" href="#" onclick="showView('about')">हमारे बारे में</a>
+<button type="button" onclick="showModal('deliveryRegisterModal')" class="border border-green-600 text-green-600 px-4 py-2 rounded-lg hover:bg-green-50">
+    Delivery Register
+  </button>
+
+<div id="userInfo" class="hide">
+<span class="text-gray-800 mr-2">नमस्ते, <span id="userName" class="font-semibold"></span></span>
+<button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mr-2" onclick="showView('dashboard')">
+<i class="fas fa-tachometer-alt mr-1"></i>डैशबोर्ड
+</button>
+<button type="button" class="border border-red-600 text-red-600 px-4 py-2 rounded-lg hover:bg-red-50" onclick="logout()">लॉगआउट</button>
+</div>
+<div id="guestButtons">
+<button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" onclick="showModal('loginModal')">लॉगिन</button>
+<button type="button" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50" onclick="showModal('registerModal')">रजिस्टर</button>
+</div>
+</div>
+<button type="button" class="md:hidden" onclick="toggleMobileMenu()">
+<i class="fas fa-bars text-xl"></i>
+</button>
+</div>
+</div>
+</nav>
+
+<div class="md:hidden bg-white border-t hide" id="mobileMenu">
+<div class="px-4 py-2 space-y-2">
+<a class="block py-2 text-gray-600" href="#" onclick="showView('home')">होम</a>
+<a class="block py-2 text-gray-600" href="#" onclick="showView('services')">सेवाएं</a>
+<a class="block py-2 text-gray-600" href="#" onclick="showView('about')">हमारे बारे में</a>
+<div id="mobileUserInfo" class="hide">
+<button type="button" class="block w-full text-left py-2 text-blue-600" onclick="showView('dashboard')">डैशबोर्ड</button>
+<button type="button" class="block w-full text-left py-2 text-red-600" onclick="logout()">लॉगआउट</button>
+</div>
+<div id="mobileGuestButtons">
+<button type="button" class="block w-full text-left py-2 text-blue-600" onclick="showModal('loginModal')">लॉगिन</button>
+<button type="button" class="block w-full text-left py-2 text-blue-600" onclick="showModal('registerModal')">रजिस्टर</button>
+</div>
+</div>
+</div>
+
+<div class="view" id="homeView">
+<section class="hero-gradient text-white py-20">
+<div class="max-w-7xl mx-auto px-4 text-center">
+<h1 class="text-5xl font-bold mb-6">सिरोही की सभी सेवाएं एक जगह</h1>
+<p class="text-xl mb-8 opacity-90">मल्टी-वेंडर प्लेटफॉर्म - आप मांगो तो हम पहुंचाते</p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<button type="button" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300" onclick="showView('services')">
+<i class="fas fa-search mr-2"></i>सेवा खोजें
+                    </button>
+<button type="button" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-300" onclick="showModal('vendorRegisterModal')">
+<i class="fas fa-store mr-2"></i>बिजनेस जोड़ें
+                    </button>
+</div>
+</div>
+</section>
+<section class="py-16">
+<div class="max-w-7xl mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">मुख्य सेवाएं</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+<div class="service-card bg-white p-6 rounded-xl shadow-lg text-center card-hover cursor-pointer" onclick="filterServices('electrician')">
+<i class="fas fa-bolt text-3xl text-yellow-500 mb-4"></i>
+<h3 class="font-semibold text-gray-800">इलेक्ट्रीशियन</h3>
+</div>
+<div class="service-card bg-white p-6 rounded-xl shadow-lg text-center card-hover cursor-pointer" onclick="filterServices('plumber')">
+<i class="fas fa-wrench text-3xl text-blue-500 mb-4"></i>
+<h3 class="font-semibold text-gray-800">प्लंबर</h3>
+</div>
+<div class="service-card bg-white p-6 rounded-xl shadow-lg text-center card-hover cursor-pointer" onclick="filterServices('doctor')">
+<i class="fas fa-user-md text-3xl text-green-500 mb-4"></i>
+<h3 class="font-semibold text-gray-800">डॉक्टर</h3>
+</div>
+<div class="service-card bg-white p-6 rounded-xl shadow-lg text-center card-hover cursor-pointer" onclick="filterServices('grocery')">
+<i class="fas fa-shopping-basket text-3xl text-orange-500 mb-4"></i>
+<h3 class="font-semibold text-gray-800">किराना</h3>
+</div>
+<div class="service-card bg-white p-6 rounded-xl shadow-lg text-center card-hover cursor-pointer" onclick="filterServices('cafe')">
+<i class="fas fa-coffee text-3xl text-brown-500 mb-4"></i>
+<h3 class="font-semibold text-gray-800">कैफे</h3>
+</div>
+<div class="service-card bg-white p-6 rounded-xl shadow-lg text-center card-hover cursor-pointer" onclick="filterServices('more')">
+<i class="fas fa-ellipsis-h text-3xl text-gray-500 mb-4"></i>
+<h3 class="font-semibold text-gray-800">और भी</h3>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 bg-gray-50">
+<div class="max-w-7xl mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">सभी सेवाएं</h2>
+<div class="services-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<div class="card">
+<img alt="Electrician" src="https://via.placeholder.com/80x80/FFD700/000000?text=⚡"/>
+<p>इलेक्ट्रीशियन</p>
+<a href="https://wa.me/918890784773?text=नमस्ते%2C%20मुझे%20इलेक्ट्रीशियन%20की%20सेवा%20चाहिए।" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Plumber" src="https://via.placeholder.com/80x80/1E90FF/FFFFFF?text=🔧"/>
+<p>प्लंबर</p>
+<a href="https://wa.me/918890784773?text=नमस्ते%2C%20मुझे%20प्लंबर%20की%20सेवा%20चाहिए।" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="CCTV" src="https://via.placeholder.com/80x80/FF6347/FFFFFF?text=📹"/>
+<p>CCTV</p>
+<a href="https://wa.me/918890784773?text=नमस्ते%2C%20मुझे%20CCTV%20इंस्टॉलेशन%20करवाना%20है。" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Clothes" src="https://via.placeholder.com/80x80/9370DB/FFFFFF?text=👕"/>
+<p>कपड़े की दुकान</p>
+<a href="https://wa.me/918890784773?text=नमस्ते%2C%20मैं%20कपड़े%20की%20जानकारी%20लेना%20चाहता%20हूँ।" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Cafe" src="https://via.placeholder.com/80x80/8B4513/FFFFFF?text=☕"/>
+<p>कैफे</p>
+<a href="https://wa.me/918890784773?text=नमस्ते%2C%20मुझे%20कैफे%20की%20लोकेशन%20और%20मेन्यू%20जानना%20है。" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Schools" src="https://via.placeholder.com/80x80/20B2AA/FFFFFF?text=🏫"/>
+<p>Schools</p>
+<a href="https://wa.me/918890784773?text=नमस्ते,%20मुझे%20Schools%20की%20जानकारी%20चाहिए।" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Hospitals" src="https://via.placeholder.com/80x80/DC143C/FFFFFF?text=🏥"/>
+<p>Hospitals</p>
+<a href="https://wa.me/918890784773?text=नमस्ते,%20मुझे%20Hospitals%20की%20जानकारी%20चाहिए।" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Doctor" src="https://via.placeholder.com/80x80/228B22/FFFFFF?text=👨‍⚕️"/>
+<p>Doctor</p>
+<a href="https://wa.me/918890784773?text=नमस्ते,%20मुझे%20Doctor%20की%20जानकारी%20चाहिए।" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Medical" src="https://via.placeholder.com/80x80/FF1493/FFFFFF?text=💊"/>
+<p>Medical</p>
+<a href="https://wa.me/918890784773?text=नमस्ते,%20मुझे%20Medical%20की%20जानकारी%20चाहिए।" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Kirana Shop" src="https://via.placeholder.com/80x80/FF8C00/FFFFFF?text=🛒"/>
+<p>Kirana Shop</p>
+<a href="https://wa.me/918890784773?text=नमस्ते,%20मुझे%20Kirana%20%20की%20दुकान%20की%20जानकारी%20चाहिए।" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Milk Dairy" src="https://via.placeholder.com/80x80/FFFFFF/000000?text=🥛"/>
+<p>Milk Dairy</p>
+<a href="https://wa.me/918890784773?text=नमस्ते,%20मुझे%20Dairy%20की%20जानकारी%20चाहिए。" target="_blank">WhatsApp पर पूछें</a>
+</div>
+<div class="card">
+<img alt="Nasta Shop" src="https://via.placeholder.com/80x80/FFD700/000000?text=🍿"/>
+<p>Nasta Shop</p>
+<a href="https://wa.me/918890784773?text=नमस्ते,%20मुझे%20Nasta%20%20की%20दुकान%20की%20जानकारी%20चाहिए।" target="_blank">WhatsApp पर पूछें</a>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 bg-white">
+<div class="max-w-7xl mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">वेंडर प्लान्स</h2>
+<div class="grid md:grid-cols-3 gap-8">
+<div class="plan-card p-8 rounded-xl shadow-lg border-2 border-gray-200">
+<div class="text-center">
+<h3 class="text-2xl font-bold mb-4">FREE प्लान</h3>
+<div class="text-4xl font-bold text-green-600 mb-6">₹0<span class="text-lg text-gray-500">/महीना</span></div>
+<ul class="text-left space-y-3 mb-8">
+<li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>₹100 प्रति लीड चार्ज लिया जाएगा</li>
+<li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>20% कमिशन प्रति ऑर्डर लिया जाएगा</li>
+<li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>बेसिक सपोर्ट</li>
+<li class="flex items-center"><i class="fas fa-times text-red-500 mr-2"></i>प्राइऑरिटी लिस्टिंग</li>
+<li class="flex items-center"><i class="fas fa-times text-red-500 mr-2"></i>कोई डिलीवरी बॉय उपलब्ध नहीं है</li>
+</ul>
+<button type="button" class="w-full bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700" onclick="selectPlan('free')">चुनें</button>
+</div>
+</div>
+<div class="premium-plan p-8 rounded-xl shadow-xl border-2 border-yellow-400 relative">
+<div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+<span class="bg-yellow-500 text-white px-4 py-1 rounded-full text-sm font-semibold">पॉपुलर</span>
+</div>
+<div class="text-center">
+<h3 class="text-2xl font-bold mb-4">₹3500 प्लान</h3>
+<div class="text-4xl font-bold mb-6">₹3500<span class="text-lg opacity-80">/महीना</span></div>
+<ul class="text-left space-y-3 mb-8 opacity-90">
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>₹50 प्रति लीड चार्ज लिया जाएगा</li>
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>10% कमिशन प्रति ऑर्डर लिया जाएगा</li>
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>प्राइऑरिटी सपोर्ट</li>
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>फीचर्ड लिस्टिंग</li>
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>डिलीवरी बॉय उपलब्ध है</li>
+</ul>
+<button type="button" class="w-full bg-white text-yellow-600 py-3 rounded-lg font-semibold hover:bg-gray-100" onclick="selectPlan('premium')">चुनें</button>
+</div>
+</div>
+<div class="business-plan p-8 rounded-xl shadow-xl">
+<div class="text-center">
+<h3 class="text-2xl font-bold mb-4">₹5000 प्लान</h3>
+<div class="text-4xl font-bold mb-6">₹5000<span class="text-lg opacity-80">/महीना</span></div>
+<ul class="text-left space-y-3 mb-8 opacity-90">
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>अनलिमिटेड ऑर्डर</li>
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>केवल 5% कमिशन प्रति ऑर्डर लिया जाएगा</li>
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>टॉप सपोर्ट</li>
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>प्रीमियम लिस्टिंग</li>
+<li class="flex items-center"><i class="fas fa-check mr-2"></i>डिलीवरी बॉय उपलब्ध है</li>
+</ul>
+<button type="button" class="w-full bg-white text-blue-600 py-3 rounded-lg font-semibold hover:bg-gray-100" onclick="selectPlan('business')">चुनें</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<div class="view hide" id="dashboardView">
+<div class="max-w-7xl mx-auto px-4 py-8">
+<div class="dashboard-stats">
+<h1 class="text-2xl font-bold mb-4">
+<i class="fas fa-tachometer-alt mr-2"></i>कस्टमर डैशबोर्ड
+</h1>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="text-center">
+<div class="text-2xl font-bold">12</div>
+<div class="text-sm opacity-90">कुल ऑर्डर</div>
+</div>
+<div class="text-center">
+<div class="text-2xl font-bold">3</div>
+<div class="text-sm opacity-90">पेंडिंग</div>
+</div>
+<div class="text-center">
+<div class="text-2xl font-bold">8</div>
+<div class="text-sm opacity-90">पूरे हुए</div>
+</div>
+<div class="text-center">
+<div class="text-2xl font-bold">₹2,450</div>
+<div class="text-sm opacity-90">कुल खर्च</div>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-xl shadow-lg mb-6">
+<div class="flex border-b">
+<button type="button" class="flex-1 py-4 px-6 text-center border-b-2 border-blue-600 text-blue-600 font-semibold" id="ordersTab" onclick="switchDashboardTab('orders')">
+<i class="fas fa-shopping-cart mr-2"></i>मेरे ऑर्डर
+</button>
+<button type="button" class="flex-1 py-4 px-6 text-center text-gray-600 hover:text-blue-600" id="vendorsTab" onclick="switchDashboardTab('vendors')">
+<i class="fas fa-store mr-2"></i>सभी वेंडर
+</button>
+</div>
+
+<div id="ordersTabContent" class="p-6">
+<div id="ordersContainer">
+</div>
+<div class="text-center mt-6">
+<button type="button" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700" onclick="createNewOrder()">
+<i class="fas fa-plus mr-2"></i>नया ऑर्डर करें
+</button>
+</div>
+</div>
+
+<div id="vendorsTabContent" class="p-6 hide">
+<div class="mb-4">
+<input type="text" placeholder="वेंडर खोजें..." class="w-full p-3 border border-gray-300 rounded-lg" onkeyup="searchVendors(this.value)">
+</div>
+<div id="vendorsContainer">
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="view hide" id="vendorDashboardView">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+
+
+<div id="upgradeReminder" class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded mb-4 hide">
+  <p id="vendorExpiryInfo" class="text-sm text-gray-500 mb-4"></p>
+  <strong>आप Free Plan पर हैं:</strong> ₹100 प्रति लीड + 20% कमिशन लगता है। <br/>Paid प्लान लेकर priority listing, delivery support और कम commission पाएं! <br/>
+
+<button type="button" onclick="payAndUpgradeVendor('premium')" class="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700 mt-3">
+  ₹3500 प्लान अपग्रेड करें
+</button>
+<button type="button" onclick="payAndUpgradeVendor('business')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 mt-3">
+  ₹5000 प्लान अपग्रेड करें
+</button>
+
+  <button type="button" onclick="showModal('vendorRegisterModal')" class="mt-2 bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+    Upgrade Plan
+  </button>
+</div>
+
+<div class="vendor-dashboard-stats">
+        <h1 class="text-2xl font-bold mb-4">
+          <i class="fas fa-store mr-2"></i>वेंडर डैशबोर्ड
+        </h1>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+           <div class="text-center">
+
+<div class="text-2xl font-bold" id="totalOrders">5</div>
+            <div class="text-sm opacity-90">कुल ऑर्डर</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold" id="pendingOrders">2</div>
+            <div class="text-sm opacity-90">नए ऑर्डर</div>
+          </div>
+          <div class="text-center">
+
+  <div class="text-2xl font-bold" id="totalProducts">8</div>
+
+           <div class="text-sm opacity-90">प्रोडक्ट्स</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold">₹12,500</div>
+            <div class="text-sm opacity-90">कुल कमाई</div>
+           </div>
+        </div> </div> <div class="bg-white rounded-xl shadow-lg mb-6">
+        <div class="flex border-b">
+
+           <button type="button" class="flex-1 py-4 px-6 text-center border-b-2 border-green-600 text-green-600 font-semibold" id="vendorOrdersTab" onclick="switchVendorTab('orders')">
+            <i class="fas fa-list-alt mr-2"></i>नए ऑर्डर
+          </button>
+          <button type="button" class="flex-1 py-4 px-6 text-center text-gray-600 hover:text-green-600" id="vendorProductsTab" onclick="switchVendorTab('products')">
+
+
+            <i class="fas fa-boxes mr-2"></i>मेरे प्रोडक्ट्स
+           </button>
+        </div>
+
+   </div> <div id="vendorOrdersTabContent" class="p-6">
+    <div id="vendorOrdersContainer">
+    </div>
+    </div>
+    <div id="vendorProductsTabContent" class="p-6 hide">
+    <div class="flex justify-between items-center mb-6">
+    <h3 class="text-xl font-bold">मेरे प्रोडक्ट्स</h3>
+    <button type="button" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700" onclick="showModal('addProductModal')">
+    <i class="fas fa-plus mr-2"></i>नया प्रोडक्ट जोड़ें
+    </button>
+     </div>
+    <div id="vendorProductsContainer">
+    </div>
+    </div>
+       </div>
+    </div>
+
+    </div> </div> <div class="view hide" id="adminDashboardView">
+
+ <div class="max-w-7xl mx-auto px-4 py-8">
+      <h2 class="text-2xl font-bold mb-6 text-blue-700"><i class="fas fa-user-shield mr-2"></i>Admin Dashboard</h2>
+      <h3 class="text-lg font-semibold mb-2">All Registered Users</h3>
+      <select onchange="filterVendorList(this.value)" class="border p-2 rounded mb-4">
+  <option value="all">सभी वेंडर</option>
+  <option value="expired">केवल एक्सपायर वेंडर</option>
+</select>
+<ul id="userList" class="mb-6 list-disc list-inside text-gray-700"></ul>
+
+      <h3 class="text-lg font-semibold mb-2">Pending Delivery Boys</h3>
+      <ul id="pendingDeliveryList" class="list-disc list-inside text-red-600"></ul>
+
+      <h3 class="text-lg font-semibold mb-2 mt-6">Pending Vendor Requests</h3>
+      <ul id="pendingVendorList" class="list-disc list-inside text-yellow-600"></ul>
+    </div>
+  </div>
+
+<div id="deliveryDashboardView" class="view hide">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      <h2 class="text-2xl font-bold mb-6 text-purple-700"><i class="fas fa-motorcycle mr-2"></i>Delivery Dashboard</h2>
+
+      <div class="bg-white p-4 rounded shadow mb-6">
+        <h3 class="text-lg font-semibold mb-2">Live Location (Simulated)</h3>
+        <div id="liveLocation" class="text-gray-700 text-sm">Not yet updated</div>
+        <button type="button" onclick="getLiveLocation()" class="mt-2 px-4 py-2 bg-purple-600 text-white rounded">Update Location</button>
+      </div>
+
+     <div class="bg-white p-4 rounded shadow">
+
+  <h3 class="text-lg font-semibold mb-2">My Orders</h3>
+        <div id="deliveryOrdersContainer" class="space-y-3 text-sm text-gray-800">
+           No orders assigned
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<div class="view hide" id="servicesView">
+<div class="max-w-7xl mx-auto px-4 py-8">
+<div class="flex flex-col md:flex-row gap-8">
+<div class="w-full md:w-1/4">
+<div class="bg-white p-6 rounded-xl shadow-lg">
+<h3 class="font-bold text-lg mb-4">फिल्टर करें</h3>
+<div class="space-y-2">
+<label class="flex items-center">
+<input class="mr-2" type="checkbox" value="electrician"/>
+<span>इलेक्ट्रीशियन</span>
+</label>
+<label class="flex items-center">
+<input class="mr-2" type="checkbox" value="plumber"/>
+<span>प्लंबर</span>
+</label>
+<label class="flex items-center">
+<input class="mr-2" type="checkbox" value="doctor"/>
+<span>डॉक्टर</span>
+</label>
+<label class="flex items-center">
+<input class="mr-2" type="checkbox" value="grocery"/>
+<span>किराना</span>
+</label>
+</div>
+<h3 class="font-bold text-lg mb-4 mt-6">क्षेत्र</h3>
+<select class="w-full p-2 border border-gray-300 rounded">
+<option>सभी क्षेत्र</option>
+<option>सिटी सेंटर</option>
+<option>रेल बाजार</option>
+<option>कॉलेज रोड</option>
+</select>
+<h3 class="font-bold text-lg mb-4 mt-6">रेटिंग</h3>
+<div class="space-y-2">
+<label class="flex items-center">
+<input class="mr-2" name="rating" type="radio" value="4+"/>
+<span>4★ से ऊपर</span>
+</label>
+<label class="flex items-center">
+<input class="mr-2" name="rating" type="radio" value="3+"/>
+<span>3★ से ऊपर</span>
+</label>
+</div>
+</div>
+</div>
+<div class="w-full md:w-3/4">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold">सभी सेवाएं</h2>
+<select class="p-2 border border-gray-300 rounded">
+<option>लोकप्रियता के अनुसार</option>
+<option>रेटिंग के अनुसार</option>
+<option>दूरी के अनुसार</option>
+</select>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="servicesGrid">
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="view hide" id="aboutView">
+<div class="max-w-7xl mx-auto px-4 py-8">
+<div class="bg-white rounded-xl shadow-lg p-8">
+<h1 class="text-3xl font-bold text-center mb-8">हमारे बारे में</h1>
+<div class="grid md:grid-cols-2 gap-8">
+<div>
+<h2 class="text-2xl font-bold mb-4">सिरोही सर्विसेज</h2>
+<p class="text-gray-600 mb-4">सिरोही सर्विसेज एक मल्टी-वेंडर प्लेटफॉर्म है जो सिरोही शहर की सभी सेवाओं को एक जगह उपलब्ध कराता है। हमारा मिशन है स्थानीय व्यापारियों को डिजिटल प्लेटफॉर्म पर लाना और ग्राहकों को बेहतर सेवा प्रदान करना।</p>
+<ul class="space-y-2">
+<li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>200+ वेरिफाइड वेंडर्स</li>
+<li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>24/7 कस्टमर सपोर्ट</li>
+<li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>तुरंत डिलीवरी सेवा</li>
+<li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>सुरक्षित पेमेंट गेटवे</li>
+</ul>
+</div>
+<div>
+<h2 class="text-2xl font-bold mb-4">संपर्क जानकारी</h2>
+<div class="space-y-4">
+<div class="flex items-center">
+<i class="fas fa-phone text-blue-600 mr-3"></i>
+<span>+91 88907 84773</span>
+</div>
+<div class="flex items-center">
+<i class="fas fa-envelope text-blue-600 mr-3"></i>
+<span>info@sirohiservices.com</span>
+</div>
+<div class="flex items-center">
+<i class="fas fa-map-marker-alt text-blue-600 mr-3"></i>
+<span>सिरोही, राजस्थान</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hide" id="registerModal">
+<div class="bg-white rounded-xl p-8 w-full max-w-md mx-4">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold">कस्टमर रजिस्ट्रेशन</h2>
+<button type="button" class="text-gray-500 hover:text-gray-700" onclick="hideModal('registerModal')">
+<i class="fas fa-times text-xl"></i>
+</button>
+</div>
+<form class="space-y-4" id="customerRegisterForm">
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">नाम *</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="अपना नाम दर्ज करें" type="text" id="customerName" required/>
+<div class="text-red-500 text-sm hide" id="nameError">कृपया अपना नाम दर्ज करें</div>
+</div>
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">फोन नंबर *</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="मोबाइल नंबर दर्ज करें" type="tel" id="customerPhone" required/>
+<div class="text-red-500 text-sm hide" id="phoneError">कृपया सही फोन नंबर दर्ज करें</div>
+</div>
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">पता *</label>
+<textarea class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="अपना पूरा पता दर्ज करें" rows="3" id="customerAddress" required></textarea>
+<div class="text-red-500 text-sm hide" id="addressError">कृपया अपना पूरा पता दर्ज करें</div>
+</div>
+<div class="hide" id="otpSection">
+<label class="block text-gray-700 text-sm font-bold mb-2">OTP *</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="6 अंकों का OTP दर्ज करें" type="text" id="customerOtp" maxlength="6"/>
+<div class="text-red-500 text-sm hide" id="otpError">कृपया सही OTP दर्ज करें</div>
+<div class="text-green-600 text-sm mt-1">OTP आपके फोन पर भेजा गया है: <span id="sentOtp"></span></div>
+</div>
+<button type="button" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300" id="registerBtn">OTP भेजें</button>
+</form>
+</div>
+</div>
+
+<div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hide" id="loginModal">
+<div class="bg-white rounded-xl p-8 w-full max-w-md mx-4">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold">लॉगिन करें</h2>
+<button type="button" class="text-gray-500 hover:text-gray-700" onclick="hideModal('loginModal')">
+<i class="fas fa-times text-xl"></i>
+</button>
+</div>
+<div class="flex mb-6 bg-gray-100 rounded-lg p-1">
+<button type="button" class="flex-1 py-2 px-4 rounded-md bg-blue-600 text-white transition duration-300" id="customerLoginTab">Customer</button>
+<button type="button" class="flex-1 py-2 px-4 rounded-md text-gray-600 transition duration-300" id="vendorLoginTab" >Vendor</button>
+<button type="button" class="flex-1 py-2 px-4 rounded-md text-gray-600 transition duration-300" id="adminLoginTab">Admin</button>
+<button type="button" class="flex-1 py-2 px-4 rounded-md text-gray-600 transition duration-300" id="deliveryLoginTab">Delivery</button>
+</div>
+<form id="loginForm">
+<div class="login-type" id="customerLogin">
+<div class="mb-4">
+<label class="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Mobile number enter करें" type="tel" id="loginPhone"/>
+</div>
+<button type="button" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300" onclick="sendLoginOTP()">Send OTP</button>
+<div class="mt-4 hide" id="loginOtpSection">
+<div class="mb-4">
+<label class="block text-gray-700 text-sm font-bold mb-2">OTP</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="OTP enter करें" type="text" id="loginOtp"/>
+</div>
+<button type="button" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-300" onclick="verifyLoginOTP('customer')">Verify & Login</button>
+</div>
+</div>
+<div class="login-type hide" id="deliveryLogin">
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+      <input type="email" id="deliveryLoginEmail" placeholder="Delivery Email" class="w-full p-3 border border-gray-300 rounded-lg" />
+    </div>
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+      <input type="password" id="deliveryLoginPassword" placeholder="Password" class="w-full p-3 border border-gray-300 rounded-lg" />
+    </div>
+    <button type="button" onclick="loginDeliveryBoy()" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700">Login as Delivery Boy</button>
+  </div>
+
+<div class="login-type hide" id="vendorAdminLogin">
+<div class="mb-4">
+<label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Email enter करें" type="email" id="vendorEmail"/>
+</div>
+<div class="mb-6">
+<label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Password enter करें" type="password" id="vendorPassword"/>
+</div>
+<button type="button" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300" onclick="loginVendorAdmin()">Login</button>
+</div>
+</form>
+</div>
+</div>
+
+<div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hide" id="vendorRegisterModal">
+    <div class="bg-white rounded-xl p-8 w-full max-w-3xl mx-4 max-h-screen overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">वेंडर रजिस्ट्रेशन</h2>
+             <button type="button" class="text-gray-500 hover:text-gray-700" onclick="hideModal('vendorRegisterModal')">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <form class="space-y-4" id="vendorRegisterForm">
+
+<div id="vendorOtpSection" class="hide">
+  <label class="block text-gray-700 text-sm font-bold mb-2">OTP *</label>
+  <input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+         placeholder="6 अंकों का OTP दर्ज करें" type="text" id="vendorOtpInput" maxlength="6" />
+  <div class="text-sm text-green-600 mt-1">OTP भेजा गया है: <span id="vendorOtpSentText"></span></div>
+</div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                     <label class="block text-gray-700 text-sm font-bold mb-2">Business Name</label>
+                    <input class="w-full p-3 border border-gray-300 rounded-lg" placeholder="बिजनेस का नाम" type="text" id="businessName" required/>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Owner Name</label>
+                     <input class="w-full p-3 border border-gray-300 rounded-lg" placeholder="मालिक का नाम" type="text" id="ownerName" required/>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                     <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Email" type="email" id="email" required/>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Phone</label>
+                     <input class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Phone Number" type="tel" id="phone" required/>
+                </div>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Category</label>
+                 <select class="w-full p-3 border border-gray-300 rounded-lg" id="category" required>
+                    <option value="">Select Category</option>
+                    <option value="electrician">Electrician</option>
+                    <option value="plumber">Plumber</option>
+                   <option value="grocery">Grocery Store</option>
+                     <option value="medical">Medical Store</option>
+                    <option value="restaurant">Restaurant/Cafe</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+             <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Address</label>
+                <textarea class="w-full p-3 border border-gray-300 rounded-lg" placeholder="पूरा पता" rows="3" id="address" required></textarea>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-4">
+               <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Create Password</label>
+                <input type="password" id="vendorPasswordCreate" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Password" required />
+              </div>
+              <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Confirm Password</label>
+                 <input type="password" id="vendorPasswordConfirm" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Re-enter Password" required />
+              </div>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Choose Plan</label>
+                 <div class="grid md:grid-cols-3 gap-4">
+                    <label class="border border-gray-300 rounded-lg p-4 cursor-pointer hover:bg-blue-50" onclick="selectPlanInModal('free')">
+                        <input class="mb-2" name="plan" type="radio" value="free" id="freePlan"/>
+                         <div class="font-semibold">Free Plan</div>
+                         <div class="text-sm text-gray-600">₹0/month</div>
+                    </label>
+                    <label class="border border-yellow-300 rounded-lg p-4 cursor-pointer hover:bg-yellow-50 border-2" onclick="selectPlanInModal('premium')">
+                         <input class="mb-2" name="plan" type="radio" value="premium" id="premiumPlan"/>
+                         <div class="font-semibold">₹3500 Plan</div>
+                        <div class="text-sm text-gray-600">Popular</div>
+                    </label>
+                    <label class="border border-blue-300 rounded-lg p-4 cursor-pointer hover:bg-blue-50 border-2" onclick="selectPlanInModal('business')">
+                         <input class="mb-2" name="plan" type="radio" value="business" id="businessPlan"/>
+                        <div class="font-semibold">₹5000 Plan</div>
+                        <div class="text-sm text-gray-600">Premium</div>
+                    </label>
+                 </div>
+            </div>
+
+            <div id="paymentSection" class="hide">
+                <div class="payment-section">
+                    <h3 class="text-xl font-bold mb-4 text-center">
+                           <i class="fas fa-credit-card mr-2"></i>पेमेंट करें
+                    </h3>
+                    <div class="flex flex-col md:flex-row items-center gap-6">
+                        <div class="flex-shrink-0">
+                           <div class="qr-code mx-auto"></div>
+                            <p class="text-center mt-2 text-sm text-gray-600">QR Code स्कैन करें</p>
+                        </div>
+                          <div class="flex-1">
+                               <div class="space-y-4">
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                      <h4 class="font-semibold text-yellow-800 mb-2">
+                                         <i class="fas fa-info-circle mr-2"></i>पेमेंट की जानकारी
+                                    </h4>
+                                     <p class="text-sm text-yellow-700 mb-2">Plan Amount: <span id="planAmount" class="font-bold">₹0</span></p>
+                                    <p class="text-sm text-yellow-700 mb-2">UPI ID: <span class="font-mono">vendor@sirohiservices</span></p>
+                                     <p class="text-sm text-yellow-700">कृपया QR कोड स्कैन करके पेमेंट करें और स्क्रीनशॉट अपलोड करें।</p>
+                                </div>
+                                <div>
+                                   <label class="block text-gray-700 text-sm font-bold mb-2">
+                                        <i class="fas fa-upload mr-2"></i>Payment Screenshot Upload करें
+                                       </label>
+                                    <div class="upload-area" onclick="document.getElementById('paymentScreenshot').click()">
+                                        <input type="file" id="paymentScreenshot" accept="image/*" class="hide" onchange="handleFileUpload(this)"/>
+                                         <div id="uploadContent">
+                                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                              <p class="text-gray-600">Click to upload payment screenshot</p>
+                                            <p class="text-sm text-gray-500">PNG, JPG up to 5MB</p>
+                                           </div>
+                                        <div id="uploadedFile" class="hide">
+                                               <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
+                                            <p class="text-green-600 font-semibold">Screenshot uploaded successfully!</p>
+                                           </div>
+                                                                   </div>
+                                          </div>
+                            </div>
+                           </div>
+                    </div>
+                      <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mt-4">
+                        <h4 class="font-semibold text-orange-800 mb-2">
+                             <i class="fas fa-clock mr-2"></i>Approval Process
+                        </h4>
+                           <p class="text-sm text-orange-700">पेमेंट अपलोड करने के बाद, Admin की तरफ से approval का इंतजार करना होगा। Approval मिलने के बाद आपका vendor account activate हो जाएगा।</p>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300" id="registerButton">
+                Register Vendor
+               </button>
+        </form>
+    </div>
+</div>
+
+<div id="deliveryRegisterModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hide">
+    <div class="bg-white rounded-xl p-8 w-full max-w-md mx-4 max-h-screen overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold">Delivery Boy Registration</h2>
+            <button type="button" class="text-gray-500 hover:text-gray-700" onclick="hideModal('deliveryRegisterModal')">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <form id="deliveryForm" class="space-y-3">
+            <input type="text" id="deliveryName" placeholder="Full Name" class="w-full p-3 border rounded" required />
+            <input type="text" id="aadhaar" placeholder="Aadhaar Number" class="w-full p-3 border rounded" required />
+            <input type="text" id="pan" placeholder="PAN Number" class="w-full p-3 border rounded" required />
+            <input type="text" id="qualification" placeholder="Qualification" class="w-full p-3 border rounded" required />
+            <input type="text" id="dAddress" placeholder="Address" class="w-full p-3 border rounded" required />
+           <input type="tel" id="dPhone" placeholder="Mobile Number" class="w-full p-3 border rounded" required />
+            <input type="email" id="dEmail" placeholder="Email ID" class="w-full p-3 border rounded" required />
+              <input type="password" id="dPass" placeholder="Create Password" class="w-full p-3 border rounded" required />
+            <input type="password" id="dConfirm" placeholder="Confirm Password" class="w-full p-3 border rounded" required />
+
+            <div id="otpBox" class="hide space-y-2">
+                <input type="text" id="otpInput" placeholder="Enter OTP" class="w-full p-3 border rounded" maxlength="6" />
+               <div class="text-sm text-green-600">OTP sent to mobile/email: <span id="sentOtpText"></span></div>
+               </div>
+
+            <button type="button" onclick="sendDeliveryOTP()" class="w-full bg-blue-600 text-white py-3 rounded">Send OTP</button>
+            <button type="button" onclick="submitDelivery()" class="w-full bg-green-600 text-white py-3 rounded hide" id="finalDeliveryBtn">Register</button>
+        </form>
+    </div>
+</div>
+
+<div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hide" id="orderModal">
+<div class="bg-white rounded-xl p-8 w-full max-w-md mx-4">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold">नया ऑर्डर</h2>
+<button type="button" class="text-gray-500 hover:text-gray-700" onclick="hideModal('orderModal')">
+<i class="fas fa-times text-xl"></i>
+</button>
+</div>
+<form class="space-y-4" id="orderForm">
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">सेवा का प्रकार</label>
+<select class="w-full p-3 border border-gray-300 rounded-lg" id="orderService" required>
+<option value="">सेवा चुनें</option>
+<option value="electrician">इलेक्ट्रीशियन</option>
+<option value="plumber">प्लंबर</option>
+<option value="grocery">किराना</option>
+<option value="medical">मेडिकल</option>
+</select>
+</div>
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">विवरण</label>
+<textarea class="w-full p-3 border border-gray-300 rounded-lg" placeholder="अपनी आवश्यकता बताएं" rows="3" id="orderDescription" required></textarea>
+</div>
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">पता</label>
+<textarea class="w-full p-3 border border-gray-300 rounded-lg" placeholder="सेवा का पता" rows="2" id="orderAddress" required></textarea>
+</div>
+<button type="button" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300" onclick="submitOrder()">ऑर्डर सबमिट करें</button>
+</form>
+</div>
+</div>
+
+<div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hide" id="addProductModal">
+<div class="bg-white rounded-xl p-8 w-full max-w-md mx-4">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold">नया प्रोडक्ट जोड़ें</h2>
+<button type="button" class="text-gray-500 hover:text-gray-700" onclick="hideModal('addProductModal')">
+<i class="fas fa-times text-xl"></i>
+</button>
+</div>
+<form class="space-y-4" id="addProductForm">
+<div>
+  <label class="block text-gray-700 text-sm font-bold mb-2">प्रोडक्ट की इमेज *</label>
+  <input type="file" accept="image/*" id="productImage" required class="w-full p-2 border rounded" />
+</div>
+<div>
+  <label class="block text-gray-700 text-sm font-bold mb-2">वीडियो लिंक (YouTube या MP4)</label>
+  <input type="text" id="productVideo" placeholder="https://..." class="w-full p-2 border rounded" />
+</div>
+
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">प्रोडक्ट का नाम *</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500" placeholder="प्रोडक्ट का नाम" type="text" id="productName" required/>
+</div>
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">कीमत (₹) *</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500" placeholder="कीमत" type="number" id="productPrice" required/>
+</div>
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">स्टॉक *</label>
+<input class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500" placeholder="स्टॉक की मात्रा" type="number" id="productStock" required/>
+</div>
+<div>
+<label class="block text-gray-700 text-sm font-bold mb-2">विवरण</label>
+<textarea class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500" placeholder="प्रोडक्ट का विवरण" rows="3" id="productDescription"></textarea>
+</div>
+<button type="button" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-300" onclick="addProduct()">प्रोडक्ट जोड़ें</button>
+</form>
+</div>
+</div>
+
+<div class="notification hide" id="notification">
+<div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+<div class="flex items-center">
+<i class="fas fa-check-circle mr-3"></i>
+<span id="notificationText">Success message</span>
+<button type="button" class="ml-4 text-white hover:text-gray-200" onclick="hideNotification()">
+<i class="fas fa-times"></i>
+</button>
+</div>
+</div>
+</div>
+
+<script>
+        // Global variables
+        
+let vendorOtp = null;
+let vendorStep = 'initial'; // 'initial', 'otp_sent', 'verified'
+
+let currentView = 'home';
+        let currentUser = null;
+        let currentUserType = null;
+        let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+        let currentOrders = JSON.parse(localStorage.getItem('customerOrders')) || [];
+        let vendorProducts = JSON.parse(localStorage.getItem('vendorProducts')) || {};
+        let vendorOrders = JSON.parse(localStorage.getItem('vendorOrders')) || [];
+        let selectedPlan = null;
+        let paymentScreenshot = null;
+        let generatedOtp = null;
+        let registrationStep = 'initial'; // 'initial', 'otp_sent', 'verified'
+
+        // Sample data
+        const vendors = [
+            {
+                id: 1,
+                name: "राम किराना स्टोर",
+                category: "grocery",
+                rating: 4.5,
+                plan: "premium",
+                status: "active",
+                location: "सिटी सेंटर",
+                email: "ram@grocery.com",
+                products: [
+                    {id: 1, name: "बासमती चावल", price: 80, stock: 50, description: "प्रीमियम बासमती चावल"},
+                    {id: 2, name: "तूर दाल", price: 120, stock: 30, description: "ताजी तूर दाल"},
+                ]
+            },
+            {
+                id: 2,
+                name: "सोनू इलेक्ट्रीशियन",
+                category: "electrician",
+                rating: 4.8,
+                plan: "business",
+                status: "active",
+                location: "रेल बाजार",
+                email: "sonu@electrician.com",
+                products: []
+            },
+            {
+                id: 3,
+                name: "शर्मा मेडिकल स्टोर",
+                category: "medical",
+                rating: 4.3,
+                plan: "free",
+                status: "active",
+                location: "कॉलेज रोड",
+                email: "sharma@medical.com",
+                products: [
+                    {id: 3, name: "पैरासिटामोल", price: 25, stock: 100, description: "बुखार और दर्द की दवा"},
+                ]
+            }
+        ];
+        // Sample orders for demo
+        const sampleOrders = [
+            {
+                id: 1,
+                customerId: null,
+                customerName: "राजू कुमार",
+                service: "electrician",
+                description: "घर में बत्ती का काम",
+                address: "123 मेन स्ट्रीट, सिरोही",
+                status: "confirmed",
+                date: "2024-01-20",
+                vendor: "सोनू इलेक्ट्रीशियन",
+                vendorId: 2
+            },
+            {
+                id: 2,
+                customerId: null,
+                customerName: "सुनीता देवी",
+                service: "grocery",
+                description: "राशन का सामान",
+                address: "456 पार्क एवेन्यू, सिरोही",
+                status: "pending",
+                date: "2024-01-21",
+                vendor: "राम किराना स्टोर",
+                vendorId: 1
+            },
+            {
+                id: 3,
+                customerId: null,
+                customerName: "मोहन सिंह",
+                service: "plumber",
+                description: "नल की मरम्मत",
+                address: "789 गार्डन रोड, सिरोही",
+                 status: "delivered",
+                date: "2024-01-19",
+                vendor: "महेश प्लंबर",
+                vendorId: null
+            }
+        ];
+        // Utility functions
+        
+function checkAndDeactivateExpiredVendors() {
+  let users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+  const now = new Date();
+
+  users.forEach(user => {
+    if (
+      user.type === 'vendor' &&
+      user.status === 'active' &&
+      user.plan !== 'free'
+    ) {
+      const regDate = new Date(user.registrationDate);
+      const diffInDays = Math.floor((now - regDate) / (1000 * 60 * 60 * 24));
+
+      if (diffInDays >= 30) {
+        user.status = 'expired';
+      }
+    }
+  });
+
+  localStorage.setItem('registeredUsers', JSON.stringify(users));
+}
+
+function alertExpiredVendors() {
+  const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+  const expiredVendors = users.filter(
+    u => u.type === 'vendor' && u.status === 'expired'
+  );
+  if (expiredVendors.length > 0) {
+    showNotification(`${expiredVendors.length} वेंडर के अकाउंट एक्सपायर हो चुके हैं।`, 'error');
+  }
+}
+
+
+function showView(viewName) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.add('hide');
+            });
+            if (viewName === 'dashboard') {
+                if (!currentUser) {
+                    showNotification('कृपया पहले लॉगिन करें', 'error');
+                    showModal('loginModal');
+                    return;
+                }
+
+                // --- FIX: Centralized dashboard logic ---
+                if (currentUser.type === 'vendor') {
+                    document.getElementById('vendorDashboardView').classList.remove('hide');
+                    currentView = 'vendorDashboard';
+                    loadVendorDashboard();
+                } else if (currentUser.type === 'admin') {
+                    document.getElementById('adminDashboardView').classList.remove('hide');
+                    currentView = 'adminDashboardView';
+                    showAdminDashboard();
+                } else if (currentUser.type === 'delivery') {
+                    document.getElementById('deliveryDashboardView').classList.remove('hide');
+                    currentView = 'deliveryDashboard';
+                    loadDeliveryDashboard();
+                } else { // Default to customer
+                    document.getElementById('dashboardView').classList.remove('hide');
+                    currentView = 'dashboard';
+                    loadDashboard();
+                }
+            } else {
+                const viewId = viewName.endsWith('View') ? viewName : viewName + 'View';
+                const viewElement = document.getElementById(viewId);
+                if (viewElement) {
+                    viewElement.classList.remove('hide');
+                    currentView = viewName;
+                    if (viewName === 'services') {
+                        loadServices();
+                    }
+                } else {
+                    console.warn(`❌ View not found: ${viewId}`);
+                }
+            }
+        }
+
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hide');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hide');
+            // Reset forms when closing modals
+            if (modalId === 'vendorRegisterModal') {
+                resetVendorForm();
+            } else if (modalId === 'registerModal') {
+                resetCustomerForm();
+            } else if (modalId === 'addProductModal') {
+                document.getElementById('addProductForm').reset();
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+
+            notificationText.textContent = message;
+            notification.classList.remove('hide');
+
+            // Change color based on type
+            const notificationDiv = notification.querySelector('div');
+            if (type === 'error') {
+                notificationDiv.className = 'bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
+            } else {
+                notificationDiv.className = 'bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
+            }
+
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+
+        function hideNotification() {
+            document.getElementById('notification').classList.add('hide');
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hide');
+        }
+
+        // Clear form errors
+        function clearFormErrors() {
+            document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('[id$="Error"]').forEach(el => el.classList.add('hide'));
+        }
+
+        // Show form error
+        function showFormError(fieldId, errorId, message) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+
+            if (field) field.classList.add('error');
+            if (error) {
+                error.textContent = message;
+                error.classList.remove('hide');
+            }
+        }
+
+        // Generate random OTP
+        function generateOTP() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Customer Registration functionality
+        function registerCustomer() {
+            clearFormErrors();
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            const address = document.getElementById('customerAddress').value.trim();
+            const otp = document.getElementById('customerOtp').value.trim();
+
+            let hasErrors = false;
+            // Validate name
+            if (!name) {
+                showFormError('customerName', 'nameError', 'कृपया अपना नाम दर्ज करें');
+                hasErrors = true;
+            }
+
+            // Validate phone
+            if (!phone) {
+                showFormError('customerPhone', 'phoneError', 'कृपया फोन नंबर दर्ज करें');
+                hasErrors = true;
+            } else if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+                showFormError('customerPhone', 'phoneError', 'कृपया 10 अंकों का सही फोन नंबर दर्ज करें');
+                hasErrors = true;
+            }
+
+            // Validate address
+            if (!address) {
+                showFormError('customerAddress', 'addressError', 'कृपया अपना पूरा पता दर्ज करें');
+                hasErrors = true;
+            }
+
+            if (hasErrors) return;
+            // Handle registration steps
+            if (registrationStep === 'initial') {
+                // Check if phone already exists
+                const existingUser = registeredUsers.find(user => user.phone === phone && user.type === 'customer');
+                if (existingUser) {
+                    showFormError('customerPhone', 'phoneError', 'यह फोन नंबर पहले से रजिस्टर है');
+                    return;
+                }
+
+                // Send OTP
+                generatedOtp = generateOTP();
+                document.getElementById('sentOtp').textContent = generatedOtp; // In real app, this would be sent via SMS
+                document.getElementById('otpSection').classList.remove('hide');
+                document.getElementById('registerBtn').textContent = 'रजिस्टर करें';
+                registrationStep = 'otp_sent';
+                showNotification('OTP भेजा गया है!');
+                return;
+            }
+
+            if (registrationStep === 'otp_sent') {
+                // Validate OTP
+                if (!otp) {
+                    showFormError('customerOtp', 'otpError', 'कृपया OTP दर्ज करें');
+                    return;
+                }
+
+                if (otp !== generatedOtp) {
+                    showFormError('customerOtp', 'otpError', 'गलत OTP दर्ज किया गया है');
+                    return;
+                }
+
+                // Save customer data
+                const customer = {
+                    id: Date.now(),
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    type: 'customer',
+                    registrationDate: new Date().toISOString()
+                };
+                registeredUsers.push(customer);
+                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+                hideModal('registerModal');
+                showNotification('कस्टमर रजिस्ट्रेशन सफल! अब आप लॉगिन कर सकते हैं।');
+                // Reset form and step
+                resetCustomerForm();
+            }
+        }
+
+        function resetCustomerForm() {
+            document.getElementById('customerRegisterForm').reset();
+            document.getElementById('otpSection').classList.add('hide');
+            document.getElementById('registerBtn').textContent = 'OTP भेजें';
+            registrationStep = 'initial';
+            generatedOtp = null;
+            clearFormErrors();
+        }
+
+        // Login functionality
+        function switchLoginType(type) {
+            document.querySelectorAll('[id$="LoginTab"]').forEach(tab => {
+                tab.classList.remove('bg-blue-600', 'text-white');
+                tab.classList.add('text-gray-600');
+            });
+            document.getElementById(type + 'LoginTab').classList.add('bg-blue-600', 'text-white');
+            document.getElementById(type + 'LoginTab').classList.remove('text-gray-600');
+
+            if (type === 'customer') {
+                document.getElementById('customerLogin').classList.remove('hide');
+                document.getElementById('vendorAdminLogin').classList.add('hide');
+                document.getElementById('deliveryLogin').classList.add('hide');
+            } else if (type === 'delivery') {
+                document.getElementById('customerLogin').classList.add('hide');
+                document.getElementById('vendorAdminLogin').classList.add('hide');
+                document.getElementById('deliveryLogin').classList.remove('hide');
+            } else {
+                document.getElementById('customerLogin').classList.add('hide');
+                document.getElementById('vendorAdminLogin').classList.remove('hide');
+                document.getElementById('deliveryLogin').classList.add('hide');
+            }
+
+            currentUserType = type;
+        }
+
+        function sendLoginOTP() {
+            const phone = document.getElementById('loginPhone').value.trim();
+            if (!phone || phone.length !== 10) {
+                showNotification('कृपया सही फोन नंबर दर्ज करें', 'error');
+                return;
+            }
+
+            // Check if user exists
+            const user = registeredUsers.find(u => u.phone === phone && u.type === 'customer');
+            if (!user) {
+                showNotification('यह फोन नंबर रजिस्टर नहीं है। कृपया पहले रजिस्ट्रेशन करें।', 'error');
+                return;
+            }
+
+            // Generate and "send" OTP
+            generatedOtp = generateOTP();
+            document.getElementById('loginOtpSection').classList.remove('hide');
+            showNotification(`OTP भेजा गया है: ${generatedOtp}`); // In real app, this would be sent via SMS
+        }
+
+        function verifyLoginOTP(userType) {
+            const phone = document.getElementById('loginPhone').value.trim();
+            const otp = document.getElementById('loginOtp').value.trim();
+
+            if (!otp || otp.length !== 6) {
+                showNotification('कृपया 6 अंकों का OTP दर्ज करें', 'error');
+                return;
+            }
+
+            if (otp !== generatedOtp) {
+                showNotification('गलत OTP दर्ज किया गया है', 'error');
+                return;
+            }
+
+            // Find user and login
+            const user = registeredUsers.find(u => u.phone === phone && u.type === 'customer');
+            if (user) {
+                currentUser = user;
+                updateUserInterface();
+                hideModal('loginModal');
+                showNotification(`नमस्ते ${user.name}, आपका लॉगिन सफल हुआ!`);
+
+                // Reset login form
+                document.getElementById('loginForm').reset();
+                document.getElementById('loginOtpSection').classList.add('hide');
+                generatedOtp = null;
+            }
+        }
+
+        function loginVendorAdmin() {
+  const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+  const email = document.getElementById('vendorEmail').value;
+  const password = document.getElementById('vendorPassword').value;
+  
+  if (!email || !password) {
+      showNotification('कृपया ईमेल और पासवर्ड दर्ज करें', 'error');
+      return;
+  }
+
+  if (currentUserType === 'admin') {
+      if (email === 'admin@sirohi.com' && password === 'admin123') {
+          currentUser = { name: "Admin", type: "admin", email: email };
+          updateUserInterface();
+          hideModal('loginModal');
+          showView('dashboard');
+          showNotification("Welcome Admin!");
+      } else {
+          showNotification("गलत admin credentials!", 'error');
+      }
+      return;
+  }
+
+  if (currentUserType === 'vendor') {
+      const vendorUser = users.find(u => u.email === email && u.password === password && u.type === 'vendor');
+      
+      if (!vendorUser) {
+          showNotification('ईमेल या पासवर्ड गलत है।', 'error');
+          return;
+      }
+
+      if (vendorUser.status === 'expired') {
+          showNotification('आपका प्लान expire हो गया है — upgrade करने के लिए प्लान चुनें', 'error');
+          showModal('vendorRegisterModal'); 
+          return;
+      }
+
+      if (vendorUser.status !== 'active') {
+          showNotification('आपका अकाउंट अभी तक एडमिन द्वारा अप्रूव नहीं किया गया है', 'error');
+          return;
+      }
+
+      currentUser = {
+          id: vendorUser.id,
+          name: vendorUser.businessName,
+          type: "vendor",
+          email: vendorUser.email,
+          category: vendorUser.category,
+          plan: vendorUser.plan,
+          registrationDate: vendorUser.registrationDate
+      };
+      updateUserInterface();
+      hideModal('loginModal');
+      showView('dashboard');
+      showNotification(`नमस्ते ${currentUser.name}, आपका लॉगिन सफल हुआ!`);
+  }
+}
+
+
+        function updateUserInterface() {
+            if (currentUser) {
+                document.getElementById('userInfo').classList.remove('hide');
+                document.getElementById('guestButtons').classList.add('hide');
+                document.getElementById('userName').textContent = currentUser.name;
+
+                // Mobile menu
+                document.getElementById('mobileUserInfo').classList.remove('hide');
+                document.getElementById('mobileGuestButtons').classList.add('hide');
+            } else {
+                document.getElementById('userInfo').classList.add('hide');
+                document.getElementById('guestButtons').classList.remove('hide');
+
+                // Mobile menu
+                document.getElementById('mobileUserInfo').classList.add('hide');
+                document.getElementById('mobileGuestButtons').classList.remove('hide');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            currentUserType = null;
+            updateUserInterface();
+            showView('home');
+            showNotification('आपका लॉगआउट सफल हुआ');
+        }
+
+        // Dashboard functionality
+        function switchDashboardTab(tabName) {
+            // Reset tab styles
+            document.getElementById('ordersTab').classList.remove('border-blue-600', 'text-blue-600');
+            document.getElementById('ordersTab').classList.add('text-gray-600');
+            document.getElementById('vendorsTab').classList.remove('border-blue-600', 'text-blue-600');
+            document.getElementById('vendorsTab').classList.add('text-gray-600');
+
+            // Hide all tab contents
+            document.getElementById('ordersTabContent').classList.add('hide');
+            document.getElementById('vendorsTabContent').classList.add('hide');
+
+            if (tabName === 'orders') {
+                document.getElementById('ordersTab').classList.add('border-blue-600', 'text-blue-600', 'border-b-2');
+                document.getElementById('ordersTab').classList.remove('text-gray-600');
+                document.getElementById('ordersTabContent').classList.remove('hide');
+            } else if (tabName === 'vendors') {
+                document.getElementById('vendorsTab').classList.add('border-blue-600', 'text-blue-600', 'border-b-2');
+                document.getElementById('vendorsTab').classList.remove('text-gray-600');
+                document.getElementById('vendorsTabContent').classList.remove('hide');
+                loadVendorsWithProducts();
+            }
+        }
+
+        function loadDashboard() {
+            if (!currentUser || currentUser.type !== 'customer') {
+                showView('home');
+                return;
+            }
+
+            // Load orders for current user
+            const userOrders = currentOrders.filter(order => order.customerId === currentUser.id);
+            if (userOrders.length === 0) {
+                // If no orders, show sample orders for demo
+                displayOrders(sampleOrders);
+            } else {
+                displayOrders(userOrders);
+            }
+        }
+
+        function loadVendorsWithProducts() {
+            const vendorsContainer = document.getElementById('vendorsContainer');
+            vendorsContainer.innerHTML = '';
+
+            vendors.forEach(vendor => {
+                const vendorCard = createVendorWithProductsCard(vendor);
+                vendorsContainer.appendChild(vendorCard);
+            });
+        }
+
+        function createVendorWithProductsCard(vendor) {
+            const div = document.createElement('div');
+            div.className = 'vendor-card';
+
+            const priorityBadge = vendor.plan === 'business' ?
+                '<span class="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">PREMIUM</span>' :
+                                vendor.plan === 'premium' ?
+                '<span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">FEATURED</span>' : '';
+
+            let productsHtml = '';
+            if (vendor.products && vendor.products.length > 0) {
+                productsHtml = `
+                    <div class="mt-4">
+                        <h4 class="font-semibold mb-2">उपलब्ध प्रोडक्ट्स:</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                             ${vendor.products.map(product => `
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h5 class="font-medium">${product.name}</h5>
+                                            <p class="text-sm text-gray-600">${product.description || ''}</p>
+                                            <p class="text-green-600 font-semibold">₹${product.price}</p>
+                                        </div>
+                                        <span class="text-xs text-gray-500">स्टॉक: ${product.stock}</span>
+                                    </div>
+                                    <button type="button" onclick="orderProduct(${vendor.id}, ${product.id})"
+                                            class="w-full mt-2 bg-blue-500 text-white py-1 px-3 rounded text-sm hover:bg-blue-600">
+                                        ऑर्डर करें
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold">${vendor.name}</h3>
+                        <p class="text-gray-600 text-sm">${vendor.location}</p>
+                        <div class="flex items-center mt-1">
+                            <div class="flex text-yellow-400">
+                                ${'★'.repeat(Math.floor(vendor.rating))}${'☆'.repeat(5 - Math.floor(vendor.rating))}
+                            </div>
+                            <span class="ml-2 text-sm text-gray-600">(${vendor.rating})</span>
+                        </div>
+                    </div>
+                    ${priorityBadge}
+                </div>
+                ${productsHtml}
+                <div class="flex gap-2 mt-4">
+                    <button type="button" onclick="contactVendorSecure(${vendor.id})" class="flex-1 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">
+                        <i class="fab fa-whatsapp mr-2"></i>संपर्क करें
+                    </button>
+                </div>
+            `;
+            return div;
+        }
+
+        function orderProduct(vendorId, productId) {
+            if (!currentUser) {
+                showNotification('कृपया पहले लॉगिन करें', 'error');
+                return;
+            }
+
+            const vendor = vendors.find(v => v.id === vendorId);
+            const product = vendor.products.find(p => p.id === productId);
+
+            // Create order
+            const newOrder = {
+                id: Date.now(),
+                customerId: currentUser.id,
+                customerName: currentUser.name,
+                vendorId: vendorId,
+                vendor: vendor.name,
+                service: vendor.category,
+                description: `${product.name} - ₹${product.price}`,
+                address: currentUser.address,
+                status: 'pending',
+                date: new Date().toISOString(),
+                productId: productId
+            };
+            currentOrders.push(newOrder);
+            vendorOrders.push(newOrder);
+            localStorage.setItem('customerOrders', JSON.stringify(currentOrders));
+            localStorage.setItem('vendorOrders', JSON.stringify(vendorOrders));
+
+            showNotification(`${product.name} का ऑर्डर सफलतापूर्वक किया गया!`);
+        }
+
+        function searchVendors(searchTerm) {
+            const vendorsContainer = document.getElementById('vendorsContainer');
+            vendorsContainer.innerHTML = '';
+
+            const filteredVendors = vendors.filter(vendor =>
+                vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                vendor.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                vendor.location.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            filteredVendors.forEach(vendor => {
+                const vendorCard = createVendorWithProductsCard(vendor);
+                vendorsContainer.appendChild(vendorCard);
+            });
+        }
+
+        function displayOrders(orders) {
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = '';
+
+            if (orders.length === 0) {
+                ordersContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-shopping-cart text-4xl mb-4"></i>
+                        <p>अभी तक कोई ऑर्डर नहीं है</p>
+                    </div>
+                `;
+                return;
+            }
+
+            orders.forEach(order => {
+                const orderCard = createOrderCard(order);
+                ordersContainer.appendChild(orderCard);
+            });
+        }
+
+        function createOrderCard(order) {
+            const div = document.createElement('div');
+            div.className = `order-card status-${order.status}`;
+
+            const statusText = {
+                'pending': 'पेंडिंग',
+                'confirmed': 'कन्फर्म',
+                'delivered': 'पूरा हुआ'
+            };
+            const statusColor = {
+                'pending': 'text-yellow-600',
+                'confirmed': 'text-green-600',
+                'delivered': 'text-gray-600'
+            };
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="font-semibold text-lg">ऑर्डर #${order.id}</h3>
+                        <p class="text-gray-600">${order.service === 'electrician' ? 'इलेक्ट्रीशियन' :
+                                                   order.service === 'plumber' ? 'प्लंबर' :
+                                                   order.service === 'grocery' ? 'किराना' :
+                                                   order.service === 'medical' ? 'मेडिकल' : order.service}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium ${statusColor[order.status]} bg-gray-100">
+                        ${statusText[order.status]}
+                    </span>
+                </div>
+                <p class="text-gray-700 mb-2">${order.description}</p>
+                <p class="text-gray-600 mb-2"><i class="fas fa-map-marker-alt mr-2"></i>${order.address}</p>
+                <div class="flex justify-between items-center">
+                    <p class="text-gray-500 text-sm"><i class="fas fa-calendar mr-2"></i>${new Date(order.date).toLocaleDateString('hi-IN')}</p>
+                    <div class="space-x-2">
+                        <button type="button" class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600" onclick="trackOrder(${order.id})">
+                            <i class="fas fa-eye mr-1"></i>ट्रैक करें
+                        </button>
+                        ${order.vendor ? `
+                        <button type="button" class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600" onclick="contactVendorSecure('${order.vendor}')">
+                            <i class="fas fa-phone mr-1"></i>संपर्क करें
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        // Vendor Dashboard functionality
+        function switchVendorTab(tabName) {
+            // Reset tab styles
+            document.getElementById('vendorOrdersTab').classList.remove('border-green-600', 'text-green-600');
+            document.getElementById('vendorOrdersTab').classList.add('text-gray-600');
+            document.getElementById('vendorProductsTab').classList.remove('border-green-600', 'text-green-600');
+            document.getElementById('vendorProductsTab').classList.add('text-gray-600');
+
+            // Hide all tab contents
+            document.getElementById('vendorOrdersTabContent').classList.add('hide');
+            document.getElementById('vendorProductsTabContent').classList.add('hide');
+
+            if (tabName === 'orders') {
+                document.getElementById('vendorOrdersTab').classList.add('border-green-600', 'text-green-600', 'border-b-2');
+                document.getElementById('vendorOrdersTab').classList.remove('text-gray-600');
+                document.getElementById('vendorOrdersTabContent').classList.remove('hide');
+                const regDate = new Date(currentUser.registrationDate);
+  const expiryDate = new Date(regDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const expiryText = expiryDate.toLocaleDateString('hi-IN');
+  document.getElementById('vendorExpiryInfo').textContent = `आपका प्लान ${expiryText} तक वैध है।`;
+
+  loadVendorOrders();
+            } else if (tabName === 'products') {
+                document.getElementById('vendorProductsTab').classList.add('border-green-600', 'text-green-600', 'border-b-2');
+                document.getElementById('vendorProductsTab').classList.remove('text-gray-600');
+                document.getElementById('vendorProductsTabContent').classList.remove('hide');
+                loadVendorProducts();
+            }
+        }
+
+        function loadVendorDashboard() {
+  const upgradeBox = document.getElementById('upgradeReminder');
+  if (upgradeBox && currentUser.plan === 'free') {
+    upgradeBox.classList.remove('hide');
+  } else if (upgradeBox) {
+    upgradeBox.classList.add('hide');
+  }
+            if (!currentUser || currentUser.type !== 'vendor') {
+                showView('home');
+                return;
+            }
+
+            const regDate = new Date(currentUser.registrationDate);
+            const expiryDate = new Date(regDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const expiryText = expiryDate.toLocaleDateString('hi-IN');
+  document.getElementById('vendorExpiryInfo').textContent = `आपका प्लान ${expiryText} तक वैध है।`;
+
+  loadVendorOrders(); }
+
+        function loadVendorOrders() {
+            const vendorOrdersContainer = document.getElementById('vendorOrdersContainer');
+            // --- FIX: Filter out rejected orders from the dashboard view ---
+            const myOrders = [...sampleOrders, ...vendorOrders].filter(order =>
+                order.vendorId === currentUser.id && order.status !== 'rejected'
+            );
+            if (myOrders.length === 0) {
+                vendorOrdersContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-clipboard-list text-4xl mb-4"></i>
+                        <p>अभी तक कोई नया ऑर्डर नहीं है</p>
+                    </div>
+                `;
+                return;
+            }
+
+            vendorOrdersContainer.innerHTML = '';
+            myOrders.forEach(order => {
+                const orderCard = createVendorOrderCard(order);
+                vendorOrdersContainer.appendChild(orderCard);
+            });
+        }
+
+        function createVendorOrderCard(order) {
+            const div = document.createElement('div');
+            div.className = `order-card status-${order.status}`;
+
+            // --- FIX: Added 'rejected' status text and color ---
+            const statusText = {
+                'pending': 'नया ऑर्डर',
+                'confirmed': 'कन्फर्म',
+                'delivered': 'पूरा हुआ',
+                'rejected': 'रिजेक्ट'
+            };
+            const statusColor = {
+                'pending': 'text-yellow-600',
+                'confirmed': 'text-green-600',
+                'delivered': 'text-gray-600',
+                'rejected': 'text-red-600'
+            };
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="font-semibold text-lg">ऑर्डर #${order.id}</h3>
+                        <p class="text-gray-600">कस्टमर: ${order.customerName}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium ${statusColor[order.status]} bg-gray-100">
+                        ${statusText[order.status]}
+                    </span>
+                </div>
+                <p class="text-gray-700 mb-2"><strong>विवरण:</strong> ${order.description}</p>
+                <p class="text-gray-600 mb-2"><i class="fas fa-map-marker-alt mr-2"></i>${order.address}</p>
+                <p class="text-gray-500 text-sm mb-3"><i class="fas fa-calendar mr-2"></i>${new Date(order.date).toLocaleDateString('hi-IN')}</p>
+                <div class="flex gap-2">
+                    ${order.status === 'pending' ? `
+                        <button type="button" class="bg-green-500 text-white px-3 py-2 rounded text-sm hover:bg-green-600" onclick="updateOrderStatus(${order.id}, 'confirmed')">
+                            <i class="fas fa-check mr-1"></i>कन्फर्म करें
+                        </button>
+                        <button type="button" class="bg-red-500 text-white px-3 py-2 rounded text-sm hover:bg-red-600" onclick="updateOrderStatus(${order.id}, 'rejected')">
+                            <i class="fas fa-times mr-1"></i>रिजेक्ट करें
+                        </button>
+                    ` : ''}
+                    ${order.status === 'confirmed' ? `
+                        <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600" onclick="updateOrderStatus(${order.id}, 'delivered')">
+                            <i class="fas fa-truck mr-1"></i>डिलीवर किया
+                        </button>
+                    ` : ''}
+                    <button type="button" class="bg-gray-500 text-white px-3 py-2 rounded text-sm hover:bg-gray-600" onclick="contactCustomerSecure('${order.customerName}')">
+                        <i class="fas fa-phone mr-1"></i>संपर्क करें
+                    </button>
+                </div>
+            `;
+            return div;
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            // Update in sample orders
+            const sampleOrderIndex = sampleOrders.findIndex(order => order.id === orderId);
+            if (sampleOrderIndex !== -1) {
+                sampleOrders[sampleOrderIndex].status = newStatus;
+            }
+
+            // Update in vendor orders
+            const vendorOrderIndex = vendorOrders.findIndex(order => order.id === orderId);
+            if (vendorOrderIndex !== -1) {
+                vendorOrders[vendorOrderIndex].status = newStatus;
+                localStorage.setItem('vendorOrders', JSON.stringify(vendorOrders));
+            }
+
+            // Update in customer orders
+            const customerOrderIndex = currentOrders.findIndex(order => order.id === orderId);
+            if (customerOrderIndex !== -1) {
+                currentOrders[customerOrderIndex].status = newStatus;
+                localStorage.setItem('customerOrders', JSON.stringify(currentOrders));
+            }
+
+            const statusText = {
+                'confirmed': 'कन्फर्म',
+                'rejected': 'रिजेक्ट',
+                'delivered': 'डिलीवर'
+            };
+            showNotification(`ऑर्डर #${orderId} को ${statusText[newStatus]} किया गया!`);
+            const regDate = new Date(currentUser.registrationDate);
+            const expiryDate = new Date(regDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const expiryText = expiryDate.toLocaleDateString('hi-IN');
+  document.getElementById('vendorExpiryInfo').textContent = `आपका प्लान ${expiryText} तक वैध है।`;
+
+  loadVendorOrders(); // Reload orders
+        }
+
+        function loadVendorProducts() {
+            const vendorProductsContainer = document.getElementById('vendorProductsContainer');
+            // Get products for current vendor
+            const currentVendor = vendors.find(v => v.id === currentUser.id);
+            const myProducts = currentVendor ? currentVendor.products : [];
+
+            if (myProducts.length === 0) {
+                vendorProductsContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-boxes text-4xl mb-4"></i>
+                        <p>अभी तक कोई प्रोडक्ट नहीं जोड़ा गया है</p>
+                    </div>
+                `;
+                return;
+            }
+
+            vendorProductsContainer.innerHTML = '';
+            myProducts.forEach(product => {
+                const productCard = createVendorProductCard(product);
+                vendorProductsContainer.appendChild(productCard);
+            });
+        }
+
+        function createVendorProductCard(product) {
+            const div = document.createElement('div');
+            div.className = 'product-card';
+
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="font-semibold text-lg">${product.name}</h3>
+                        <p class="text-gray-600">${product.description || 'कोई विवरण नहीं'}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-bold text-green-600">₹${product.price}</p>
+                        <p class="text-sm text-gray-500">स्टॉक: ${product.stock}</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600" onclick="editProduct(${product.id})">
+                        <i class="fas fa-edit mr-1"></i>एडिट करें
+                    </button>
+                    <button type="button" class="bg-red-500 text-white px-3 py-2 rounded text-sm hover:bg-red-600" onclick="deleteProduct(${product.id})">
+                        <i class="fas fa-trash mr-1"></i>डिलीट करें
+                    </button>
+                </div>
+            `;
+            return div;
+        }
+
+        function addProduct() {
+            const name = document.getElementById('productName').value.trim();
+            const price = parseInt(document.getElementById('productPrice').value);
+            const stock = parseInt(document.getElementById('productStock').value);
+            const description = document.getElementById('productDescription').value.trim();
+            if (!name || !price || !stock) {
+                showNotification('कृपया सभी आवश्यक फील्ड भरें', 'error');
+                return;
+            }
+
+            const imageInput = document.getElementById('productImage');
+            const videoLink = document.getElementById('productVideo').value.trim();
+const imageURL = imageInput.files[0] ? URL.createObjectURL(imageInput.files[0]) : '';
+            const newProduct = {
+                id: Date.now(),
+                name: name,
+                price: price,
+                stock: stock,
+                description: description
+             };
+            // Add to vendor's products
+            const vendorIndex = vendors.findIndex(v => v.id === currentUser.id);
+            if (vendorIndex !== -1) {
+                vendors[vendorIndex].products.push(newProduct);
+            }
+
+            hideModal('addProductModal');
+            showNotification('प्रोडक्ट सफलतापूर्वक जोड़ा गया!');
+            loadVendorProducts();
+        }
+
+        function editProduct(productId) {
+            showNotification('प्रोडक्ट एडिट करने की सुविधा जल्द ही आएगी');
+        }
+
+        function deleteProduct(productId) {
+            if (confirm('क्या आप इस प्रोडक्ट को डिलीट करना चाहते हैं?')) {
+                const vendorIndex = vendors.findIndex(v => v.id === currentUser.id);
+                if (vendorIndex !== -1) {
+                    vendors[vendorIndex].products = vendors[vendorIndex].products.filter(p => p.id !== productId);
+                }
+
+                showNotification('प्रोडक्ट डिलीट कर दिया गया');
+                loadVendorProducts();
+            }
+        }
+
+        // Privacy-protected contact functions
+        function contactVendorSecure(vendorId) {
+            showNotification('वेंडर से संपर्क करने का अनुरोध भेजा गया है। वे जल्द ही आपसे संपर्क करेंगे।');
+        }
+
+        function contactCustomerSecure(customerName) {
+            showNotification(`${customerName} से संपर्क करने का अनुरोध भेजा गया है।`);
+        }
+
+        function createNewOrder() {
+            showModal('orderModal');
+        }
+
+        function submitOrder() {
+            const service = document.getElementById('orderService').value;
+            const description = document.getElementById('orderDescription').value.trim();
+            const address = document.getElementById('orderAddress').value.trim();
+
+            if (!service || !description || !address) {
+                showNotification('कृपया सभी फील्ड भरें', 'error');
+                return;
+            }
+
+            const newOrder = {
+                id: Date.now(),
+                customerId: currentUser.id,
+                customerName: currentUser.name,
+                service: service,
+                description: description,
+                address: address,
+                status: 'pending',
+                date: new Date().toISOString(),
+                vendor: null,
+                vendorId: null
+            };
+            currentOrders.push(newOrder);
+            localStorage.setItem('customerOrders', JSON.stringify(currentOrders));
+
+            hideModal('orderModal');
+            showNotification('ऑर्डर सफलतापूर्वक सबमिट हुआ!');
+            // Reset form
+            document.getElementById('orderForm').reset();
+            // Reload dashboard if currently viewing
+            if (currentView === 'dashboard') {
+                loadDashboard();
+            }
+        }
+
+        function trackOrder(orderId) {
+            showNotification(`ऑर्डर #${orderId} की ट्रैकिंग जानकारी दिखाई जा रही है...`);
+        }
+
+        // Vendor registration functionality
+        function selectPlanInModal(planType) {
+            selectedPlan = planType;
+            document.getElementById(planType + 'Plan').checked = true;
+
+            // Show/hide payment section based on plan
+            const paymentSection = document.getElementById('paymentSection');
+            const planAmount = document.getElementById('planAmount');
+
+            if (planType === 'free') {
+                paymentSection.classList.add('hide');
+                paymentScreenshot = null;
+            } else {
+                paymentSection.classList.remove('hide');
+                if (planType === 'premium') {
+                    planAmount.textContent = '₹3500';
+                } else if (planType === 'business') {
+                    planAmount.textContent = '₹5000';
+                }
+            }
+        }
+
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                // Validate file size (5MB limit)
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('File size should be less than 5MB', 'error');
+                    return;
+                }
+
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showNotification('Please upload only image files', 'error');
+                    return;
+                }
+
+                paymentScreenshot = file;
+                document.getElementById('uploadContent').classList.add('hide');
+                document.getElementById('uploadedFile').classList.remove('hide');
+
+                showNotification('Payment screenshot uploaded successfully!');
+            }
+        }
+
+        function registerVendor() {
+             // 🔻 OTP Logic Start — INSERT यह block
+  if (vendorStep === 'initial') {
+    const phone = document.getElementById('phone').value.trim();
+    if (!phone || phone.length !== 10) {
+      showNotification('कृपया सही फोन नंबर दर्ज करें', 'error');
+      return;
+    }
+
+    const existing = registeredUsers.find(u => u.phone === phone && u.type === 'vendor');
+    if (existing) {
+      showNotification('यह नंबर पहले से रजिस्टर है', 'error');
+      return;
+    }
+
+    vendorOtp = generateOTP();
+    document.getElementById('vendorOtpSentText').textContent = vendorOtp;
+    document.getElementById('vendorOtpSection').classList.remove('hide');
+    document.getElementById('registerButton').textContent = 'रजिस्टर करें';
+    vendorStep = 'otp_sent';
+    showNotification('OTP भेजा गया!');
+    return;
+  }
+
+  if (vendorStep === 'otp_sent') {
+    const enteredOtp = document.getElementById('vendorOtpInput').value.trim();
+    if (enteredOtp !== vendorOtp) {
+      showNotification('गलत OTP दर्ज किया गया', 'error');
+      return;
+    }
+    vendorStep = 'verified';
+  }
+
+  if (vendorStep !== 'verified') {
+    showNotification('OTP सत्यापन आवश्यक है', 'error');
+    return;
+  }
+  // 🔺 OTP Logic End — अब नीचे बाकी validation चालू होने चाहिए
+
+            // --- NEW: Password validation ---
+            const password = document.getElementById('vendorPasswordCreate').value.trim();
+            const confirmPassword = document.getElementById('vendorPasswordConfirm').value.trim();
+
+            if (!password || !confirmPassword) {
+              showNotification('कृपया पासवर्ड और पुष्टि दोनों भरें', 'error');
+              return;
+            }
+            if (password !== confirmPassword) {
+              showNotification('पासवर्ड मेल नहीं खा रहे', 'error');
+              return;
+            }
+
+            const businessName = document.getElementById('businessName').value.trim();
+            const ownerName = document.getElementById('ownerName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const category = document.getElementById('category').value;
+            const address = document.getElementById('address').value.trim();
+            const selectedPlanInput = document.querySelector('input[name="plan"]:checked');
+
+            if (!businessName || !ownerName || !email || !phone || !category || !address || !selectedPlanInput) {
+                showNotification('कृपया सभी फील्ड भरें', 'error');
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('कृपया सही ईमेल दर्ज करें', 'error');
+                return;
+            }
+
+            // Phone validation
+            if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+                showNotification('कृपया 10 अंकों का सही फोन नंबर दर्ज करें', 'error');
+                return;
+            }
+            
+            // Check if email already registered
+            if (registeredUsers.find(u => u.email === email)) {
+                showNotification('यह ईमेल पहले से रजिस्टर है।', 'error');
+                return;
+            }
+
+            // Check if payment is required and screenshot is uploaded
+            if (selectedPlanInput.value !== 'free' && !paymentScreenshot) {
+                showNotification('कृपया पेमेंट का स्क्रीनशॉट अपलोड करें', 'error');
+                return;
+            }
+
+            // Save vendor data
+            const vendor = {
+                id: Date.now(),
+                businessName: businessName,
+                ownerName: ownerName,
+                email: email,
+                phone: phone,
+                password: password, // <-- SAVING PASSWORD
+                category: category,
+                address: address,
+                plan: selectedPlanInput.value,
+                type: 'vendor',
+                status: selectedPlanInput.value === 'free' ? 'active' : 'pending_payment',
+                paymentScreenshot: paymentScreenshot,
+                registrationDate: new Date().toISOString()
+            };
+            registeredUsers.push(vendor);
+            localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+            if (selectedPlanInput.value === 'free') {
+                vendors.push({
+                    id: vendor.id,
+                    name: vendor.businessName,
+                    category: category,
+                    plan: selectedPlanInput.value,
+                    status: 'active',
+                    email: email,
+                    location: address,
+                    rating: 4.0,
+                    products: []
+                });
+            }
+
+            hideModal('vendorRegisterModal');
+            if (selectedPlanInput.value === 'free') {
+                showNotification('वेंडर रजिस्ट्रेशन सफल! अब आप अपने बनाए हुए पासवर्ड से लॉगिन कर सकते हैं।');
+            } else {
+                showNotification('वेंडर रजिस्ट्रेशन सबमिट हो गया! Admin की approval का इंतजार करें।');
+            }
+        }
+
+        function resetVendorForm() {
+            document.getElementById('vendorRegisterForm').reset();
+            document.getElementById('paymentSection').classList.add('hide');
+            document.getElementById('uploadContent').classList.remove('hide');
+            document.getElementById('uploadedFile').classList.add('hide');
+            // --- NEW: Cleanup error classes ---
+            document.getElementById('vendorPasswordCreate')?.classList.remove('error');
+            document.getElementById('vendorPasswordConfirm')?.classList.remove('error');
+            selectedPlan = null;
+            paymentScreenshot = null;
+        }
+
+        // Plan selection
+        function selectPlan(planType) {
+            showModal('vendorRegisterModal');
+            setTimeout(() => {
+                selectPlanInModal(planType);
+            }, 100);
+        }
+
+        // Services functionality
+        function loadServices() {
+            const servicesGrid = document.getElementById('servicesGrid');
+            if (!servicesGrid) return;
+
+            servicesGrid.innerHTML = '';
+
+            vendors.forEach(vendor => {
+                const vendorCard = createVendorCard(vendor);
+                servicesGrid.appendChild(vendorCard);
+            });
+        }
+
+        function createVendorCard(vendor) {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-xl shadow-lg p-6 card-hover';
+
+            const priorityBadge = vendor.plan === 'business' ?
+                '<span class="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">PREMIUM</span>' :
+                                vendor.plan === 'premium' ?
+                '<span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">FEATURED</span>' : '';
+
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold">${vendor.name}</h3>
+                        <p class="text-gray-600 text-sm">${vendor.location}</p>
+                    </div>
+                    ${priorityBadge}
+                </div>
+                <div class="flex items-center mb-4">
+                    <div class="flex text-yellow-400">
+                        ${'★'.repeat(Math.floor(vendor.rating))}${'☆'.repeat(5 - Math.floor(vendor.rating))}
+                    </div>
+                    <span class="ml-2 text-sm text-gray-600">(${vendor.rating})</span>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="contactVendorSecure(${vendor.id})" class="flex-1 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">
+                        <i class="fab fa-whatsapp mr-2"></i>WhatsApp
+                    </button>
+                    <button type="button" onclick="contactVendorSecure(${vendor.id})" class="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
+                        <i class="fas fa-phone mr-2"></i>Call
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        function filterServices(category) {
+            showView('services');
+        }
+
+        // Drag and drop functionality for file upload
+        function initializeDragAndDrop() {
+            const uploadArea = document.querySelector('.upload-area');
+            if (!uploadArea) return;
+
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('drag-over');
+            });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    document.getElementById('paymentScreenshot').files = files;
+                    handleFileUpload(document.getElementById('paymentScreenshot'));
+                }
+            });
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            showView('home');
+            updateUserInterface();
+            initializeDragAndDrop();
+
+            // ✅ FIX: Bind event listeners after DOM is loaded
+            document.getElementById('registerBtn')?.addEventListener('click', registerCustomer);
+            document.getElementById('registerButton')?.addEventListener('click', registerVendor);
+            document.getElementById('customerLoginTab')?.addEventListener('click', () => switchLoginType('customer'));
+            document.getElementById('vendorLoginTab')?.addEventListener('click', () => switchLoginType('vendor'));
+            document.getElementById('adminLoginTab')?.addEventListener('click', () => switchLoginType('admin'));
+            document.getElementById('deliveryLoginTab')?.addEventListener('click', () => switchLoginType('delivery'));
+
+
+            // Check if user was previously logged in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUserInterface();
+                showView('dashboard');
+            }
+
+            function saveUserSession() {
+                if (currentUser) {
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                } else {
+                     localStorage.removeItem('currentUser');
+                }
+            }
+
+            const originalUpdateUserInterface = updateUserInterface; updateUserInterface = function() {
+                originalUpdateUserInterface(); saveUserSession();
+            };
+        });
+        let deliveryOtp = null;
+        function sendDeliveryOTP() {
+            const pass = document.getElementById('dPass').value;
+            const confirm = document.getElementById('dConfirm').value;
+            if (pass !== confirm) {
+              return alert('Passwords do not match');
+            }
+            
+            const phone = document.getElementById('dPhone').value.trim();
+            if (!phone || phone.length !== 10) return alert('Invalid phone number');
+            
+            deliveryOtp = Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('otpBox').classList.remove('hide');
+            document.getElementById('sentOtpText').textContent = deliveryOtp;
+            document.getElementById('finalDeliveryBtn').classList.remove('hide');
+            alert(`OTP sent (simulated): ${deliveryOtp}`);
+        }
+
+        function submitDelivery() {
+            const otp = document.getElementById('otpInput').value.trim();
+            if (otp !== deliveryOtp.toString()) return alert('Incorrect OTP');
+            const newUser = {
+                id: Date.now(),
+                type: 'delivery',
+                name: document.getElementById('deliveryName').value.trim(),
+                aadhaar: document.getElementById('aadhaar').value.trim(),
+                pan: document.getElementById('pan').value.trim(),
+                qualification: document.getElementById('qualification').value.trim(),
+                address: document.getElementById('dAddress').value.trim(),
+                phone: document.getElementById('dPhone').value.trim(),
+                email: document.getElementById('dEmail').value.trim(),
+                password: document.getElementById('dPass').value, // <-- SAVING PASSWORD
+                status: 'pending_approval' // Delivery boys should be approved by admin
+             };
+            let users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            users.push(newUser);
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            hideModal('deliveryRegisterModal');
+            alert('Registration successful! Please wait for admin approval.');
+        }
+
+        function loginDeliveryBoy() {
+            const email = document.getElementById('deliveryLoginEmail').value.trim();
+            const pass = document.getElementById('deliveryLoginPassword').value.trim();
+            const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            const user = users.find(u => u.type === 'delivery' && u.email === email);
+            
+            if (!user) return alert('User not found!');
+            if (user.password !== pass) return alert('Incorrect password!');
+            if (user.status !== 'active') return alert('Your account is not yet approved by the admin.');
+            currentUser = user;
+            hideModal('loginModal');
+            showView('dashboard');
+        }
+
+        function loadDeliveryDashboard() {
+            showView('deliveryDashboardView');
+            const allOrders = JSON.parse(localStorage.getItem('customerOrders')) || [];
+            const pendingOrders = allOrders.filter(o => o.status === 'pending');
+
+            const container = document.getElementById('deliveryOrdersContainer');
+            container.innerHTML = '';
+
+            if (pendingOrders.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">No pending orders available.</p>';
+                return;
+            }
+
+            pendingOrders.forEach(o => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                  <div class="border-l-4 border-blue-500 bg-gray-50 p-4 rounded">
+                    <p><strong>Order #${o.id}</strong> - ${o.customerName}</p>
+                     <p>Status: <span id="orderStatus${o.id}">${o.status}</span></p>
+                    <div class="mt-2 flex gap-2">
+                      <button type="button" class="bg-green-600 text-white px-3 py-1 rounded" onclick="acceptDeliveryOrder(${o.id})">
+                        Accept
+                       </button>
+                      <button type="button" class="bg-red-600 text-white px-3 py-1 rounded" onclick="rejectDeliveryOrder(${o.id})">
+                        Reject
+                      </button>
+                     </div>
+                  </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function acceptDeliveryOrder(orderId) {
+            const statusEl = document.getElementById(`orderStatus${orderId}`);
+            if (statusEl) {
+                statusEl.textContent = 'accepted';
+                showNotification(`Order #${orderId} accepted by you`);
+            }
+            // Future: Save to DB or assign to delivery boy
+        }
+        
+        function rejectDeliveryOrder(orderId) {
+            const statusEl = document.getElementById(`orderStatus${orderId}`);
+            if (statusEl) {
+                statusEl.textContent = 'rejected';
+                showNotification(`Order #${orderId} rejected. It will be reassigned`);
+                autoAssignDelivery(orderId); // Trigger reassignment
+            }
+            // Future: trigger auto-assignment here
+        }
+
+        // Auto reassign delivery
+        function autoAssignDelivery(orderId) {
+            console.log(`Auto-reassigning order #${orderId}`);
+            // 1. Get all active delivery boys
+            const allUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            const deliveryBoys = allUsers.filter(u => u.type === 'delivery' && u.status === 'active');
+            if (deliveryBoys.length > 0) {
+                 // 2. Find the order and update it
+                let orders = JSON.parse(localStorage.getItem('customerOrders')) || [];
+                const orderIndex = orders.findIndex(o => o.id === orderId);
+
+                if (orderIndex !== -1) {
+                    // Simple logic: assign to a random available delivery boy
+                    const randomBoy = deliveryBoys[Math.floor(Math.random() * deliveryBoys.length)];
+                    orders[orderIndex].assignedTo = randomBoy.email;
+                    orders[orderIndex].status = 'pending'; // Reset status for the new boy
+                    
+                    // 3. Save the updated order list
+                    localStorage.setItem('customerOrders', JSON.stringify(orders));
+                    showNotification(`Order #${orderId} has been reassigned to ${randomBoy.name}.`);
+                    
+                    // Refresh the view to reflect changes
+                    loadDeliveryDashboard();
+                }
+            } else {
+                showNotification('No active delivery boys available for reassignment.', 'error');
+            }
+        }
+
+
+        function getLiveLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    pos => {
+                        document.getElementById('liveLocation').textContent =
+                            `Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`;
+                    },
+                    () => {
+                        document.getElementById('liveLocation').textContent = 'Unable to retrieve location';
+                    }
+                );
+            } else {
+                document.getElementById('liveLocation').textContent = 'Geolocation not supported';
+            }
+        }
+
+        function showAdminDashboard() {
+  checkAndDeactivateExpiredVendors();
+  // ✅ Expiry logic
+  alertExpiredVendors();             // ✅ Admin alert
+            showView('adminDashboardView');
+            const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            const userList = document.getElementById('userList');
+            const pendingDelivery = document.getElementById('pendingDeliveryList');
+            const pendingVendorList = document.getElementById('pendingVendorList');
+            userList.innerHTML = '';
+            pendingDelivery.innerHTML = '';
+            pendingVendorList.innerHTML = '';
+
+            users.forEach(u => {
+                const item = document.createElement('li');
+                item.textContent = `${u.type.toUpperCase()} – ${u.name || u.businessName} (${u.email})`;
+                userList.appendChild(item);
+
+                if (u.type === 'delivery' && u.status !== 'active') {
+                      const pendingItem = document.createElement('li');
+                    pendingItem.innerHTML = `
+               ${u.name} (${u.email})
+                <button type="button" onclick="approveDeliveryUser('${u.email}')" class="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded">Approve</button>
+              `;
+                      pendingDelivery.appendChild(pendingItem);
+                }
+                
+                if (u.type === 'vendor' && u.status === 'pending_payment') {
+                    const li = document.createElement('li');
+                     li.innerHTML = `
+                      ${u.businessName} (${u.email}) – ${u.plan.toUpperCase()}
+                      <button type="button" onclick="approveVendor('${u.email}')" class="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded">Approve</button>
+                    `;
+                    pendingVendorList.appendChild(li);
+                }
+            });
+        }
+        
+        function approveVendor(email) {
+          const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+          const vendor = users.find(u => u.email === email && u.type === 'vendor');
+          if (vendor) {
+            vendor.status = 'active';
+            vendors.push({
+              id: vendor.id,
+              name: vendor.businessName,
+              category: vendor.category,
+              plan: vendor.plan,
+              status: 'active',
+              email: vendor.email,
+              location: vendor.address,
+              rating: 4.0,
+              products: []
+            });
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            alert(`${vendor.businessName} को approval दे दिया गया`);
+            showAdminDashboard();
+          }
+        }
+
+        function approveDeliveryUser(email) {
+            const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+            const user = users.find(u => u.email === email && u.type === 'delivery');
+            if (user) {
+                user.status = 'active';
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+                alert(`${user.name} को approval दे दिया गया`);
+                showAdminDashboard();
+            }
+        }
+</script>
+
+
+<div class="flex gap-4 mb-4">
+  <button type="button" onclick="downloadVendorCSV()" class="bg-blue-600 text-white px-4 py-2 rounded">📥 Export Vendors</button>
+  <button type="button" onclick="downloadDeliveryCSV()" class="bg-green-600 text-white px-4 py-2 rounded">📥 Export Delivery Boys</button>
+</div>
+
+<script>
+function downloadVendorCSV() {
+  const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+  const vendors = users.filter(u => u.type === 'vendor');
+  let csv = 'Business Name,Owner,Email,Phone,Plan,Status\n';
+  vendors.forEach(v => {
+    csv += `${v.businessName},${v.ownerName},${v.email},${v.phone},${v.plan},${v.status}\n`;
+  });
+  downloadCSV(csv, 'vendors.csv');
+}
+
+function downloadDeliveryCSV() {
+  const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+  const deliveryBoys = users.filter(u => u.type === 'delivery');
+  let csv = 'Name,Email,Phone,Status\n';
+  deliveryBoys.forEach(d => {
+    csv += `${d.name},${d.email},${d.phone},${d.status}\n`;
+  });
+  downloadCSV(csv, 'delivery_boys.csv');
+}
+
+function downloadCSV(data, filename) {
+  const blob = new Blob([data], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+
+<h3 class="text-lg font-semibold mt-6 mb-2">Lead Summary</h3>
+<button type="button" onclick="simulateLeadBilling()" class="bg-orange-500 text-white px-4 py-2 rounded">💼 Simulate Lead Charge</button>
+<div id="leadSummary" class="mt-3 text-gray-800 text-sm"></div>
+
+<script>
+function simulateLeadBilling() {
+  const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+  const vendorLeads = users.filter(u => u.type === 'vendor' && u.status === 'active');
+  let html = `<table class="w-full border text-left"><thead><tr>
+    <th class="p-2 border">Vendor</th>
+    <th class="p-2 border">Plan</th>
+    <th class="p-2 border">Lead Charge</th>
+    <th class="p-2 border">Commission</th>
+    <th class="p-2 border">GST (18%)</th>
+    <th class="p-2 border">Total</th>
+  </tr></thead><tbody>`;
+  vendorLeads.forEach(v => {
+    const config = planConfigurations[v.plan];
+    const lead = config.leadCharge;
+    const comm = Math.round(lead * (config.commissionPercent / 100));
+    const gst = Math.round((lead + comm) * 0.18);
+    const total = lead + comm + gst;
+
+    html += `<tr>
+      <td class="p-2 border">${v.businessName}</td>
+      <td class="p-2 border">${v.plan}</td>
+      <td class="p-2 border">₹${lead}</td>
+      <td class="p-2 border">₹${comm}</td>
+      <td class="p-2 border">₹${gst}</td>
+       <td class="p-2 border font-semibold">₹${total}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table>`;
+  document.getElementById('leadSummary').innerHTML = html;
+}
+</script>
+
+<div id="vendorMap" class="h-96 w-full border mt-4"></div>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+<script>
+function initMap() {
+  const map = new google.maps.Map(document.getElementById("vendorMap"), {
+    zoom: 12,
+    center: { lat: 24.8849, lng: 72.8586 } // Default to Sirohi
+  });
+  vendors.forEach(vendor => {
+    const marker = new google.maps.Marker({
+      position: { lat: 24.8849, lng: 72.8586 }, // TODO: Geocode vendor.address
+      map,
+      title: vendor.name
+    });
+  });
+}
+</script>
+
+
+<script>
+// 🔧 (1) Razorpay Payment Success पर WhatsApp Unlock करें
+function markOrderPaid(newOrder) {
+  newOrder.chatAllowed = true;
+  newOrder.chatStartTime = new Date().toISOString();
+  newOrder.sessionExpired = false;
+}
+
+// 🔧 (2) Vendor Panel में CTA तभी दिखाएं
+function showWhatsAppButton(order, vendor, btn) {
+  if (order.chatAllowed && !order.sessionExpired) {
+    const encodedMsg = encodeURIComponent("Hello, this is a message via *Sirohi Services*. Kindly proceed with order #" + order.id);
+    const waLink = `https://wa.me/${vendor.phone}?text=${encodedMsg}`;
+    btn.href = waLink;
+    btn.classList.remove('hide');
+  } else {
+    btn.classList.add('hide');
+  }
+}
+
+// 🔧 (3) Auto Chat Disable Script
+function autoExpireChat(order) {
+  const created = new Date(order.chatStartTime);
+  const now = new Date();
+  const diffMinutes = (now - created) / 60000;
+
+  if (diffMinutes >= 5 || order.status === 'delivered') {
+    order.sessionExpired = true;
+    localStorage.setItem('customerOrders', JSON.stringify(currentOrders));
+  }
+}
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Rebinding action buttons after DOM is ready
+  document.getElementById('registerBtn')?.addEventListener('click', registerCustomer);
+  document.getElementById('registerButton')?.addEventListener('click', registerVendor);
+  document.getElementById('customerLoginTab')?.addEventListener('click', () => switchLoginType('customer'));
+  document.getElementById('vendorLoginTab')?.addEventListener('click', () => switchLoginType('vendor'));
+  document.getElementById('adminLoginTab')?.addEventListener('click', () => switchLoginType('admin'));
+  document.getElementById('deliveryLoginTab')?.addEventListener('click', () => switchLoginType('delivery'));
+
+  // Ensure selectPlan buttons do not submit forms
+  document.querySelectorAll('button[onclick^="selectPlan"]').forEach(btn => {
+    btn.setAttribute('type', 'button');
+  });
+});
+</script>
+
+</body>
+</html>
+
+
+function filterVendorList(filter) {
+  const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+  const list = document.getElementById('userList');
+  list.innerHTML = '';
+
+  users.forEach(u => {
+    if (u.type === 'vendor' && (filter === 'all' || u.status === filter)) {
+      const item = document.createElement('li');
+      item.textContent = `${u.businessName} – ${u.status}`;
+      list.appendChild(item);
+    }
+  });
+}
+
+
+function payAndUpgradeVendor(plan) {
+  const options = {
+    key: 'rzp_test_xxxxxxxx', // Replace with your test key
+    amount: plan === 'premium' ? 350000 : 500000,
+    currency: 'INR',
+    name: 'Sirohi Services',
+    description: `${plan.toUpperCase()} Plan Payment`,
+    handler: function (response) {
+      updateVendorAfterPayment(plan);
+      showNotification('प्लान अपग्रेड सफल! आपका खाता फिर से सक्रिय हो गया');
+    },
+    prefill: {
+      email: currentUser.email,
+      contact: currentUser.phone
+    },
+    theme: {
+      color: '#3b82f6'
+    }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+
+function updateVendorAfterPayment(plan) {
+  const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+  const vendor = users.find(u => u.email === currentUser.email && u.type === 'vendor');
+  if (vendor) {
+    vendor.plan = plan;
+    vendor.status = 'active';
+    vendor.registrationDate = new Date().toISOString();
+    localStorage.setItem('registeredUsers', JSON.stringify(users));
+  }
+
+  currentUser.plan = plan;
+  currentUser.status = 'active';
+  currentUser.registrationDate = vendor.registrationDate;
+  updateUserInterface();
+  loadVendorDashboard();
+}
+
+
+function orderProduct(vendorId, productId) {
+  if (!currentUser) {
+    showNotification('कृपया पहले लॉगिन करें', 'error');
+    return;
+  }
+
+  const vendor = vendors.find(v => v.id === vendorId);
+  const product = vendor.products.find(p => p.id === productId);
+  const options = {
+    key: 'rzp_test_XXXXXXX', // Replace with your Razorpay test key
+    amount: product.price * 100, // paise
+    currency: 'INR',
+    name: vendor.name,
+    description: product.name,
+    handler: function (response) {
+      const newOrder = {
+        id: Date.now(),
+        customerId: currentUser.id,
+        customerName: currentUser.name,
+        vendorId: vendorId,
+        vendor: vendor.name,
+        service: vendor.category,
+        description: `${product.name} - ₹${product.price}`,
+        address: currentUser.address,
+        status: 'pending',
+        date: new Date().toISOString(),
+        productId: productId
+      };
+      currentOrders.push(newOrder);
+      vendorOrders.push(newOrder);
+      localStorage.setItem('customerOrders', JSON.stringify(currentOrders));
+      localStorage.setItem('vendorOrders', JSON.stringify(vendorOrders));
+      showNotification(`${product.name} का ऑर्डर सफलतापूर्वक किया गया!`);
+    },
+    prefill: {
+      name: currentUser.name,
+      contact: currentUser.phone
+    },
+    theme: {
+      color: '#0f172a'
+    }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+
+function markDelivered(orderId) {
+  const orders = JSON.parse(localStorage.getItem('customerOrders')) || [];
+  const order = orders.find(o => o.id === orderId);
+  if (order) {
+    order.status = 'delivered';
+    localStorage.setItem('customerOrders', JSON.stringify(orders));
+    showNotification(`Order #${orderId} marked as delivered.`);
+    loadDeliveryDashboard();
+  }
+}
+
+
+function createVendorProductCard(product) {
+  const card = document.createElement('div');
+  card.className = 'border p-4 rounded shadow mb-4';
+
+  // Image (if available)
+  if (product.image) {
+    const img = document.createElement('img');
+    img.src = product.image;
+    img.alt = product.name;
+    img.className = 'w-full h-48 object-cover mb-2';
+    card.appendChild(img);
+  }
+
+  // Video (if available)
+  if (product.video) {
+    const videoWrapper = document.createElement('div');
+    videoWrapper.className = 'mb-2';
+    if (product.video.includes('youtube.com') || product.video.includes('youtu.be')) {
+      const iframe = document.createElement('iframe');
+      iframe.src = product.video;
+      iframe.width = "100%";
+      iframe.height = "200";
+      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+      iframe.allowFullscreen = true;
+      videoWrapper.appendChild(iframe);
+    } else {
+      const video = document.createElement('video');
+      video.src = product.video;
+      video.controls = true;
+      video.className = 'w-full h-48';
+      videoWrapper.appendChild(video);
+    }
+    card.appendChild(videoWrapper);
+  }
+
+  const title = document.createElement('h3');
+  title.textContent = product.name;
+  title.className = 'text-lg font-bold';
+  card.appendChild(title);
+
+  const price = document.createElement('p');
+  price.textContent = `₹${product.price}`;
+  price.className = 'text-green-600 font-semibold';
+  card.appendChild(price);
+
+  return card;
+}
+       }
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Rebinding action buttons after DOM is ready
+  document.getElementById('registerBtn')?.addEventListener('click', registerCustomer);
+  document.getElementById('registerButton')?.addEventListener('click', registerVendor);
+  document.getElementById('customerLoginTab')?.addEventListener('click', () => switchLoginType('customer'));
+  document.getElementById('vendorLoginTab')?.addEventListener('click', () => switchLoginType('vendor'));
+  document.getElementById('adminLoginTab')?.addEventListener('click', () => switchLoginType('admin'));
+  document.getElementById('deliveryLoginTab')?.addEventListener('click', () => switchLoginType('delivery'));
+
+  // Ensure selectPlan buttons do not submit forms
+  document.querySelectorAll('button[onclick^="selectPlan"]').forEach(btn => {
+    btn.setAttribute('type', 'button');
+  });
+});
+</script>
+<script src="otp-script.js"></script>
+</body>
+</html>
+
+
