@@ -34,8 +34,7 @@ def send_otp():
 
     sms_status = send_sms(phone, otp)
 
-    return jsonify(success=True, message="OTP भेजा गया है!", sms_status=sms_status)
-
+    return jsonify(success=True, message="OTP भेजा गया है!", sms_status=sms_response.text)
 @app.route("/verify-otp", methods=["POST"])
 def verify():
     data = request.json
