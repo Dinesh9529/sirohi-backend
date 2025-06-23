@@ -1,12 +1,13 @@
-from flask_cors import CORS
-CORS(app)
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from otp_utils import generate_otp, save_otp, verify_otp, save_user
 import requests, urllib.parse
 import os
 from dotenv import load_dotenv
 
 app = Flask(__name__)
+CORS(app)  # ✅ Enable Cross-Origin support
+
 load_dotenv()  # Load environment variables from .env file
 
 # 📤 Send SMS using SMSINDIAHUB
@@ -36,7 +37,8 @@ def send_otp():
 
     sms_status = send_sms(phone, otp)
 
-    return jsonify(success=True, message="OTP भेजा गया है!", sms_status=sms_response.text)
+    return jsonify(success=True, message="OTP भेजा गया है!", sms_status=sms_status)  # ✅ Fixed typo
+
 @app.route("/verify-otp", methods=["POST"])
 def verify():
     data = request.json
