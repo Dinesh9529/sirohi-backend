@@ -1,28 +1,35 @@
-import json, random, time, os
+import random
+import time
+
+# Temporary in-memory OTP store
+otp_store = {}  # Format: { phone_number: {"otp": "1234", "timestamp": 1723728827} }
+
+OTP_EXPIRY_SECONDS = 300  # 5 minutes
 
 def generate_otp():
-    return str(random.randint(100000, 999999))
+    return str(random.randint(1000, 9999))
 
 def save_otp(phone, otp):
-    os.makedirs("data", exist_ok=True)
-    with open("data/otps.json", "w") as f:
-        json.dump({phone: {"otp": otp, "time": time.time()}}, f)
+    otp_store[phone] = {
+        "otp": otp,
+        "timestamp": time.time()
+    }
 
-def verify_otp(phone, entered):
-    try:
-        with open("data/otps.json") as f:
-            data = json.load(f)
-            return data.get(phone, {}).get("otp") == entered and time.time() - data[phone]["time"] < 300
-    except:
+def verify_otp(phone, user_otp):
+    record = otp_store.get(phone)
+    if not record:
         return False
 
-def save_user(user_data):
-    os.makedirs("data", exist_ok=True)
-    file = "data/users.json"
-    try:
-        users = json.load(open(file))
-    except:
-        users = []
-    users.append(user_data)
-    with open(file, "w") as f:
-        json.dump(users, f, indent=2)
+    if time.time() - record["timestamp"] > OTP_EXPIRY_SECONDS:
+        del otp_store[phone]
+        return False
+
+    if record["otp"] == user_otp:
+        del otp_store[phone]  # Optional: remove used OTP
+        return True
+
+    return False
+
+def save_user(data):
+    # Stub: In real setup, you might save to a database or Firestore
+    print(f"User registered: {data['phone']} - {data.get('name', 'No Name')}")
