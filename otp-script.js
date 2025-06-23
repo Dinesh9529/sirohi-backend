@@ -1,5 +1,6 @@
 const BACKEND_URL = "https://sirohi-backend.onrender.com"; // Replace with actual Render URL
 
+console.log("Send OTP called");
 async function sendOTP() {
   const phone = document.getElementById("phone").value.trim();
   if (!/^\d{10}$/.test(phone)) {
