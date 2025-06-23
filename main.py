@@ -1,3 +1,5 @@
+from flask_cors import CORS
+CORS(app)
 from flask import Flask, request, jsonify
 from otp_utils import generate_otp, save_otp, verify_otp, save_user
 import requests, urllib.parse
