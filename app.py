@@ -13,4 +13,6 @@ def add_product():
 def get_products():
     return jsonify(products)
 
-app.run(debug=True)
+# ✅ Only run locally, not on Render
+if __name__ == "__main__":
+    app.run(debug=True)
