@@ -1,12 +1,19 @@
 from flask import Flask, request, jsonify
-import os, json
+import os
+import json
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'uploads'
-DATA_FILE = 'data/products.json'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# === FOLDER SETUP ===
+os.makedirs('uploads', exist_ok=True)
 os.makedirs('data', exist_ok=True)
+
+PRODUCTS_FILE = 'data/products.json'
+VENDORS_FILE = 'data/vendors.json'
+CUSTOMERS_FILE = 'data/customers.json'
+DELIVERY_FILE = 'data/delivery.json'
+
+# === PRODUCT ROUTES ===
 
 @app.route('/api/products', methods=['POST'])
 def add_product():
@@ -15,31 +22,106 @@ def add_product():
     video = request.files.get('video')
 
     if not image or not video:
-        return jsonify({'error': 'Both image and video required'}), 400
+        return jsonify({'error': 'Both image and video are required'}), 400
 
-    # Save media files
-    image_path = os.path.join(UPLOAD_FOLDER, image.filename)
-    video_path = os.path.join(UPLOAD_FOLDER, video.filename)
+    image_path = os.path.join('uploads', image.filename)
+    video_path = os.path.join('uploads', video.filename)
     image.save(image_path)
     video.save(video_path)
 
     data['image'] = image.filename
     data['video'] = video.filename
 
-    # Save data to JSON file
-    with open(DATA_FILE, 'a') as f:
+    with open(PRODUCTS_FILE, 'a') as f:
         f.write(json.dumps(data) + '\n')
 
     return jsonify({'message': 'Product saved', 'data': data})
 
 @app.route('/api/products', methods=['GET'])
-def get_all():
-    products = []
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'r') as f:
+def get_products():
+    items = []
+    if os.path.exists(PRODUCTS_FILE):
+        with open(PRODUCTS_FILE, 'r') as f:
             for line in f:
-                products.append(json.loads(line.strip()))
-    return jsonify(products)
+                items.append(json.loads(line.strip()))
+    return jsonify(items)
 
+
+# === VENDOR ROUTES ===
+
+@app.route('/api/vendors', methods=['POST'])
+def add_vendor():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid JSON'}), 400
+
+    with open(VENDORS_FILE, 'a') as f:
+        f.write(json.dumps(data) + '\n')
+
+    return jsonify({'message': 'Vendor added', 'data': data})
+
+@app.route('/api/vendors', methods=['GET'])
+def get_vendors():
+    vendors = []
+    if os.path.exists(VENDORS_FILE):
+        with open(VENDORS_FILE, 'r') as f:
+            for line in f:
+                vendors.append(json.loads(line.strip()))
+    return jsonify(vendors)
+
+
+# === CUSTOMER ROUTES ===
+
+@app.route('/api/customers', methods=['POST'])
+def add_customer():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid JSON'}), 400
+
+    with open(CUSTOMERS_FILE, 'a') as f:
+        f.write(json.dumps(data) + '\n')
+
+    return jsonify({'message': 'Customer added', 'data': data})
+
+@app.route('/api/customers', methods=['GET'])
+def get_customers():
+    customers = []
+    if os.path.exists(CUSTOMERS_FILE):
+        with open(CUSTOMERS_FILE, 'r') as f:
+            for line in f:
+                customers.append(json.loads(line.strip()))
+    return jsonify(customers)
+
+
+# === DELIVERY BOY ROUTES ===
+
+@app.route('/api/delivery', methods=['POST'])
+def add_delivery():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid JSON'}), 400
+
+    with open(DELIVERY_FILE, 'a') as f:
+        f.write(json.dumps(data) + '\n')
+
+    return jsonify({'message': 'Delivery boy added', 'data': data})
+
+@app.route('/api/delivery', methods=['GET'])
+def get_delivery():
+    delivery_boys = []
+    if os.path.exists(DELIVERY_FILE):
+        with open(DELIVERY_FILE, 'r') as f:
+            for line in f:
+                delivery_boys.append(json.loads(line.strip()))
+    return jsonify(delivery_boys)
+
+
+# === ROOT TEST ROUTE (optional) ===
+
+@app.route('/')
+def home():
+    return '✅ Flask backend is live and running!'
+
+# === DEV MODE ONLY ===
 if __name__ == '__main__':
     app.run(debug=True)
