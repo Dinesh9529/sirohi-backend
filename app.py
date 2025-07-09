@@ -126,3 +126,32 @@ def home():
     return '✅ Sirohi Backend is up and running!'
 
 # === DO NOT run app.run() here! Render uses gunicorn ===
+@app.route('/api/products', methods=['POST'])
+def add_product():
+    print("📥 Product upload route hit")
+    try:
+        data = request.form.to_dict()
+        image = request.files.get('image')
+        video = request.files.get('video')
+
+        if not image or not video:
+            print("❌ Missing image or video")
+            return jsonify({'error': 'Both image and video are required'}), 400
+
+        os.makedirs('uploads', exist_ok=True)
+
+        image.save(os.path.join('uploads', image.filename))
+        video.save(os.path.join('uploads', video.filename))
+
+        data['image'] = image.filename
+        data['video'] = video.filename
+
+        with open('data/products.json', 'a') as f:
+            f.write(json.dumps(data) + '\n')
+
+        print("✅ Product saved:", data)
+        return jsonify({'message': 'Product saved', 'data': data})
+
+    except Exception as e:
+        print("🔥 Upload failed:", str(e))
+        return jsonify({'error': str(e)}), 500
