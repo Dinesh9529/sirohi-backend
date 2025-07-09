@@ -16,7 +16,6 @@ DELIVERY_FILE = 'data/delivery.json'
 
 # === PRODUCT ROUTES ===
 
-@app.route('/api/products', methods=['POST'])
 def add_product():
     data = request.form.to_dict()
     image = request.files.get('image')
