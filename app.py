@@ -154,3 +154,8 @@ def add_product():
     except Exception as e:
         print("🔥 Upload failed:", str(e))
         return jsonify({'error': str(e)}), 500
+
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)  # 👈 This enables CORS for all routes
