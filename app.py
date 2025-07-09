@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 import os
 import json
 
 app = Flask(__name__)
+CORS(app)  # Enables cross-origin requests for all routes
 
 # === Ensure folders exist ===
 os.makedirs('uploads', exist_ok=True)
@@ -16,26 +18,35 @@ DELIVERY_FILE = 'data/delivery.json'
 
 # === PRODUCT ROUTES ===
 
+@app.route('/api/products', methods=['POST'])
 def add_product():
-    data = request.form.to_dict()
-    image = request.files.get('image')
-    video = request.files.get('video')
+    print("📥 Product upload route hit")
+    try:
+        data = request.form.to_dict()
+        image = request.files.get('image')
+        video = request.files.get('video')
 
-    if not image or not video:
-        return jsonify({'error': 'Both image and video are required'}), 400
+        if not image or not video:
+            print("❌ Missing image or video")
+            return jsonify({'error': 'Both image and video are required'}), 400
 
-    image_path = os.path.join('uploads', image.filename)
-    video_path = os.path.join('uploads', video.filename)
-    image.save(image_path)
-    video.save(video_path)
+        image_path = os.path.join('uploads', image.filename)
+        video_path = os.path.join('uploads', video.filename)
+        image.save(image_path)
+        video.save(video_path)
 
-    data['image'] = image.filename
-    data['video'] = video.filename
+        data['image'] = image.filename
+        data['video'] = video.filename
 
-    with open(PRODUCTS_FILE, 'a') as f:
-        f.write(json.dumps(data) + '\n')
+        with open(PRODUCTS_FILE, 'a') as f:
+            f.write(json.dumps(data) + '\n')
 
-    return jsonify({'message': 'Product saved', 'data': data})
+        print("✅ Product saved:", data)
+        return jsonify({'message': 'Product saved', 'data': data})
+
+    except Exception as e:
+        print("🔥 Upload failed:", str(e))
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/products', methods=['GET'])
 def get_products():
@@ -123,39 +134,3 @@ def uploaded_file(filename):
 @app.route('/')
 def home():
     return '✅ Sirohi Backend is up and running!'
-
-# === DO NOT run app.run() here! Render uses gunicorn ===
-@app.route('/api/products', methods=['POST'])
-def add_product():
-    print("📥 Product upload route hit")
-    try:
-        data = request.form.to_dict()
-        image = request.files.get('image')
-        video = request.files.get('video')
-
-        if not image or not video:
-            print("❌ Missing image or video")
-            return jsonify({'error': 'Both image and video are required'}), 400
-
-        os.makedirs('uploads', exist_ok=True)
-
-        image.save(os.path.join('uploads', image.filename))
-        video.save(os.path.join('uploads', video.filename))
-
-        data['image'] = image.filename
-        data['video'] = video.filename
-
-        with open('data/products.json', 'a') as f:
-            f.write(json.dumps(data) + '\n')
-
-        print("✅ Product saved:", data)
-        return jsonify({'message': 'Product saved', 'data': data})
-
-    except Exception as e:
-        print("🔥 Upload failed:", str(e))
-        return jsonify({'error': str(e)}), 500
-
-from flask_cors import CORS
-
-app = Flask(__name__)
-CORS(app)  # 👈 This enables CORS for all routes
