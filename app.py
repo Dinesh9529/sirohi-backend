@@ -24,19 +24,17 @@ def add_product():
     try:
         data = request.form.to_dict()
         image = request.files.get('image')
-        video = request.files.get('video')
+        video_link = data.get('video_link')  # ✅ YouTube link instead of video file
 
-        if not image or not video:
-            print("❌ Missing image or video")
-            return jsonify({'error': 'Both image and video are required'}), 400
+        if not image or not video_link:
+            print("❌ Missing image or video link")
+            return jsonify({'error': 'Image and YouTube link required'}), 400
 
         image_path = os.path.join('uploads', image.filename)
-        video_path = os.path.join('uploads', video.filename)
         image.save(image_path)
-        video.save(video_path)
 
         data['image'] = image.filename
-        data['video'] = video.filename
+        data['video'] = video_link
 
         with open(PRODUCTS_FILE, 'a') as f:
             f.write(json.dumps(data) + '\n')
