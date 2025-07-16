@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS
+from flask_cors import CORS  # 👈 CORS import top pe hona chahiye
 import os
 import json
 
 app = Flask(__name__)
-CORS(app)  # Enables cross-origin requests for all routes
+CORS(app)  # 👈 App ke turant baad initialized hona chahiye
 
 # === Ensure folders exist ===
 os.makedirs('uploads', exist_ok=True)
@@ -24,7 +24,7 @@ def add_product():
     try:
         data = request.form.to_dict()
         image = request.files.get('image')
-        video_link = data.get('video_link')  # ✅ YouTube link instead of video file
+        video_link = data.get('video_link')
 
         if not image or not video_link:
             print("❌ Missing image or video link")
