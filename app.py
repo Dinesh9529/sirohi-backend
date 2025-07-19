@@ -1,134 +1,37 @@
-from flask import Flask, request, jsonify, send_from_directory
+﻿from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os
-import json
+from pymongo import MongoClient
 
 app = Flask(__name__)
-CORS(app)  # Enables cross-origin requests
+CORS(app)
 
-# === Ensure folders exist ===
-os.makedirs('uploads', exist_ok=True)
-os.makedirs('data', exist_ok=True)
-
-# === File Paths ===
-PRODUCTS_FILE = 'data/products.json'
-VENDORS_FILE = 'data/vendors.json'
-CUSTOMERS_FILE = 'data/customers.json'
-DELIVERY_FILE = 'data/delivery.json'
-
-# === PRODUCT ROUTES ===
-
-@app.route('/api/products', methods=['POST'])
-def add_product():
-    print("📥 Product upload route hit")
-    try:
-        data = request.form.to_dict()
-        image = request.files.get('image')
-        video_link = data.get('video_link')  # Optional YouTube link
-
-        if not image:
-            print("❌ Missing image")
-            return jsonify({'error': 'Image file is required'}), 400
-
-        image_path = os.path.join('uploads', image.filename)
-        image.save(image_path)
-
-        data['image'] = image.filename
-        data['video'] = video_link if video_link else None  # Optional field
-
-        with open(PRODUCTS_FILE, 'a') as f:
-            f.write(json.dumps(data) + '\n')
-
-        print("✅ Product saved:", data)
-        return jsonify({'message': 'Product saved', 'data': data})
-
-    except Exception as e:
-        print("🔥 Upload failed:", str(e))
-        return jsonify({'error': str(e)}), 500
+# MongoDB setup
+client = MongoClient("mongodb+srv://<USERNAME>:<PASSWORD>@<CLUSTER_URL>/?retryWrites=true&w=majority")
+db = client["sirohi"]
+products_collection = db["products"]
 
 @app.route('/api/products', methods=['GET'])
 def get_products():
-    products = []
-    if os.path.exists(PRODUCTS_FILE):
-        with open(PRODUCTS_FILE, 'r') as f:
-            for line in f:
-                products.append(json.loads(line.strip()))
+    products = list(products_collection.find({}, {'_id': 0}))
     return jsonify(products)
 
-# === VENDOR ROUTES ===
+@app.route('/api/products', methods=['POST'])
+def upload_product():
+    data = request.form
+    image_file = request.files.get('image')
 
-@app.route('/api/vendors', methods=['POST'])
-def add_vendor():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': 'Invalid JSON'}), 400
+    if not image_file:
+        return jsonify({"error": "No image uploaded"}), 400
 
-    with open(VENDORS_FILE, 'a') as f:
-        f.write(json.dumps(data) + '\n')
+    image_filename = image_file.filename
+    image_file.save(f"uploads/{image_filename}")
 
-    return jsonify({'message': 'Vendor added', 'data': data})
+    product = {
+        "name": data.get("name"),
+        "price": data.get("price"),
+        "video": data.get("video_link"),
+        "image": image_filename
+    }
 
-@app.route('/api/vendors', methods=['GET'])
-def get_vendors():
-    vendors = []
-    if os.path.exists(VENDORS_FILE):
-        with open(VENDORS_FILE, 'r') as f:
-            for line in f:
-                vendors.append(json.loads(line.strip()))
-    return jsonify(vendors)
-
-# === CUSTOMER ROUTES ===
-
-@app.route('/api/customers', methods=['POST'])
-def add_customer():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': 'Invalid JSON'}), 400
-
-    with open(CUSTOMERS_FILE, 'a') as f:
-        f.write(json.dumps(data) + '\n')
-
-    return jsonify({'message': 'Customer added', 'data': data})
-
-@app.route('/api/customers', methods=['GET'])
-def get_customers():
-    customers = []
-    if os.path.exists(CUSTOMERS_FILE):
-        with open(CUSTOMERS_FILE, 'r') as f:
-            for line in f:
-                customers.append(json.loads(line.strip()))
-    return jsonify(customers)
-
-# === DELIVERY BOY ROUTES ===
-
-@app.route('/api/delivery', methods=['POST'])
-def add_delivery():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': 'Invalid JSON'}), 400
-
-    with open(DELIVERY_FILE, 'a') as f:
-        f.write(json.dumps(data) + '\n')
-
-    return jsonify({'message': 'Delivery boy added', 'data': data})
-
-@app.route('/api/delivery', methods=['GET'])
-def get_delivery():
-    delivery_boys = []
-    if os.path.exists(DELIVERY_FILE):
-        with open(DELIVERY_FILE, 'r') as f:
-            for line in f:
-                delivery_boys.append(json.loads(line.strip()))
-    return jsonify(delivery_boys)
-
-# === STATIC FILE ROUTE ===
-
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory('uploads', filename)
-
-# === ROOT TEST ===
-
-@app.route('/')
-def home():
-    return '✅ Sirohi Backend is up and running!'
+    products_collection.insert_one(product)
+    return jsonify({"message": "Product saved", "data": product})
