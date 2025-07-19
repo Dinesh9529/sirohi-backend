@@ -10,6 +10,10 @@ client = MongoClient("mongodb+srv://<USERNAME>:<PASSWORD>@<CLUSTER_URL>/?retryWr
 db = client["sirohi"]
 products_collection = db["products"]
 
+def convert_to_embed(youtube_link):
+    # Shorts link to iframe-compatible embed format
+    return youtube_link.replace("/shorts/", "/embed/").split("?")[0]
+
 @app.route('/api/products', methods=['GET'])
 def get_products():
     products = list(products_collection.find({}, {'_id': 0}))
@@ -26,10 +30,15 @@ def upload_product():
     image_filename = image_file.filename
     image_file.save(f"uploads/{image_filename}")
 
+    # Video link conversion
+    raw_video_link = data.get("video_link")
+    embed_video_link = convert_to_embed(raw_video_link)
+
     product = {
         "name": data.get("name"),
         "price": data.get("price"),
-        "video": data.get("video_link"),
+        "video": raw_video_link,
+        "video_embed": embed_video_link,
         "image": image_filename
     }
 
