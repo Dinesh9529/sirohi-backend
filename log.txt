@@ -1,0 +1,29 @@
+commit cb038dd04946cf5afbb71893c6b2d87df261ffe5
+Author: Dinesh <your-email@example.com>
+Date:   Wed Jul 16 23:54:05 2025 +0530
+
+    ✅ Final app.py with proper CORS init and YouTube image upload
+
+commit f3923d26c423840f72dc23263609f96ae4b03082
+Author: Dinesh <your-email@example.com>
+Date:   Sun Jul 13 00:24:34 2025 +0530
+
+    ⚡ Final patch: image upload + YouTube video link support
+
+commit e7653ec6098216478a3de765c791d51008897161
+Author: Dinesh <your-email@example.com>
+Date:   Thu Jul 10 00:20:21 2025 +0530
+
+    💎 Fresh backend code deployed with CORS, uploads and routes
+
+commit 96930c779d1ce57f6b176f9faccfb447b641ae8e
+Author: Dinesh <your-email@example.com>
+Date:   Thu Jul 10 00:05:43 2025 +0530
+
+    ✅ Enabled CORS for all routes
+
+commit 90e8a467a7840cf38e1d24931a48a46b336e6ee6
+Author: Dinesh <your-email@example.com>
+Date:   Wed Jul 9 23:46:59 2025 +0530
+
+    🔥 Fixed duplicate route: add_product
