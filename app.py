@@ -6,12 +6,19 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-os.makedirs("uploads/videos", exist_ok=True)
+# Static folders for media
 os.makedirs("uploads/images", exist_ok=True)
+os.makedirs("uploads/videos", exist_ok=True)
 
+# MongoDB setup
 client = MongoClient("mongodb+srv://<USERNAME>:<PASSWORD>@<CLUSTER_URL>/?retryWrites=true&w=majority")
 db = client["sirohi"]
-products = db["products"]
+products_collection = db["products"]
+
+@app.route('/api/products', methods=['GET'])
+def get_products():
+    products = list(products_collection.find({}, {'_id': 0}))
+    return jsonify(products)
 
 @app.route('/api/products', methods=['POST'])
 def upload_product():
@@ -35,5 +42,5 @@ def upload_product():
         "video": video_name
     }
 
-    products.insert_one(product)
+    products_collection.insert_one(product)
     return jsonify({"message": "Product saved", "data": product})
