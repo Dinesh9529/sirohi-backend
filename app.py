@@ -11,7 +11,7 @@ os.makedirs("uploads/images", exist_ok=True)
 os.makedirs("uploads/videos", exist_ok=True)
 
 # MongoDB setup
-client = MongoClient("mongodb+srv://<USERNAME>:<PASSWORD>@<CLUSTER_URL>/?retryWrites=true&w=majority")
+MongoClient("mongodb+srv://dinesh:MyPass123@cluster0.sx9ij.mongodb.net/?retryWrites=true&w=majority")
 db = client["sirohi"]
 products_collection = db["products"]
 
