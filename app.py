@@ -13,24 +13,23 @@ UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# MongoDB setup
-
-client = MongoClient("mongodb+srv://dineshinfrasofttech:<db_password>@sirohi-cluster.rskoyvc.mongodb.net/?retryWrites=true&w=majority&appName=sirohi-cluster", tlsAllowInvalidCertificates=True)
-db = client["sirohi"]
-products = db["products"]
-
-
+# ✅ MongoDB lazy client (fork-safe for Gunicorn)
+def get_db_collection():
+    client = MongoClient(
+        "mongodb+srv://dineshinfrasofttech:<db_password>@sirohi-cluster.rskoyvc.mongodb.net/?retryWrites=true&w=majority&appName=sirohi-cluster",
+        tlsAllowInvalidCertificates=True
+    )
+    db = client["sirohi"]
+    return db["products"]
 
 @app.route("/")
 def home():
     return "Sirohi backend is alive 🔥"
 
-# 👇 Serve uploaded images publicly
 @app.route("/uploads/<filename>")
 def serve_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
-# 👇 Product upload route
 @app.route("/api/products", methods=["GET", "POST"])
 def upload_product():
     if request.method == "POST":
@@ -64,15 +63,17 @@ def upload_product():
                 "main_image": main_path,
                 "gallery": gallery_paths
             }
-            products.insert_one(product)
+            get_db_collection().insert_one(product)
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             return jsonify({"error": f"Upload failed: {str(e)}"}), 500
 
     else:
         try:
-            all_data = list(products.find({}, {"_id": 0}))
+            all_data = list(get_db_collection().find({}, {"_id": 0}))
             return jsonify(all_data)
         except Exception as e:
             return jsonify({"error": str(e)}), 500
