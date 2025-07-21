@@ -8,12 +8,12 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# Upload directory
+# Upload folder config
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# MongoDB Atlas connection
+# MongoDB setup
 client = MongoClient("mongodb+srv://dineshinfrasofttech:<db_password>@sirohi-cluster.rskoyvc.mongodb.net/?retryWrites=true&w=majority&appName=sirohi-cluster")
 db = client["sirohi"]
 products = db["products"]
@@ -22,10 +22,12 @@ products = db["products"]
 def home():
     return "Sirohi backend is alive 🔥"
 
+# 👇 Serve uploaded images publicly
 @app.route("/uploads/<filename>")
 def serve_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
+# 👇 Product upload route
 @app.route("/api/products", methods=["GET", "POST"])
 def upload_product():
     if request.method == "POST":
