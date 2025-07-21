@@ -14,12 +14,10 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # MongoDB setup
-from pymongo import MongoClient
 
-client = MongoClient(
-    "mongodb+srv://dineshinfrasofttech:<db_password>@sirohi-cluster.rskoyvc.mongodb.net/?retryWrites=true&w=majority&appName=sirohi-cluster",
-    tlsAllowInvalidCertificates=True
-)
+client = MongoClient("mongodb+srv://dineshinfrasofttech:<db_password>@sirohi-cluster.rskoyvc.mongodb.net/?retryWrites=true&w=majority&appName=sirohi-cluster", tlsAllowInvalidCertificates=True)
+db = client["sirohi"]
+products = db["products"]
 
 
 
