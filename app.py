@@ -1,9 +1,16 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
+import os
 
+# Initialize Flask
 app = Flask(__name__)
 CORS(app)
+
+# Upload directory
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # MongoDB Atlas connection
 client = MongoClient("mongodb+srv://dineshinfrasofttech:<db_password>@sirohi-cluster.rskoyvc.mongodb.net/?retryWrites=true&w=majority&appName=sirohi-cluster")
@@ -15,17 +22,44 @@ def home():
     return "Sirohi backend is alive 🔥"
 
 @app.route("/api/products", methods=["GET", "POST"])
-def handle_products():
+def upload_product():
     if request.method == "POST":
-        data = request.get_json()
-        if data:
-            products.insert_one(data)
-            return jsonify({"status": "Product added"}), 200
-        else:
-            return jsonify({"error": "Invalid data"}), 400
+        name = request.form.get("name")
+        price = request.form.get("price")
+        main_image = request.files.get("main_image")
+        gallery_files = request.files.getlist("gallery_images")
+
+        if not name or not price or not main_image:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Save main image
+        main_path = os.path.join(UPLOAD_FOLDER, main_image.filename)
+        main_image.save(main_path)
+
+        # Save gallery images
+        gallery_paths = []
+        for file in gallery_files:
+            if file and file.filename:
+                path = os.path.join(UPLOAD_FOLDER, file.filename)
+                file.save(path)
+                gallery_paths.append(path)
+
+        # Store product in DB
+        product = {
+            "name": name,
+            "price": price,
+            "main_image": main_path,
+            "gallery": gallery_paths
+        }
+        products.insert_one(product)
+        return jsonify({"status": "Product uploaded", "product": product}), 200
+
     else:
-        all_products = list(products.find({}, {"_id": 0}))
-        return jsonify(all_products)
+        try:
+            all_data = list(products.find({}, {"_id": 0}))
+            return jsonify(all_data)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run()
