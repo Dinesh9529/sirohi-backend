@@ -38,7 +38,7 @@ def upload_product():
     if request.method == "POST":
         name = request.form.get("name")
         price = request.form.get("price")
-        main_image = request.files.get("main_image")
+        main_image = request.files.get("image")
         gallery_files = request.files.getlist("gallery_images")
 
         if not name or not price or not main_image:
