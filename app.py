@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from pymongo import MongoClient
+from werkzeug.utils import secure_filename
 import os
 
 # Initialize Flask
@@ -8,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Upload directory
-UPLOAD_FOLDER = "uploads"
+UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
@@ -21,6 +22,10 @@ products = db["products"]
 def home():
     return "Sirohi backend is alive 🔥"
 
+@app.route("/uploads/<filename>")
+def serve_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
 @app.route("/api/products", methods=["GET", "POST"])
 def upload_product():
     if request.method == "POST":
@@ -32,27 +37,33 @@ def upload_product():
         if not name or not price or not main_image:
             return jsonify({"error": "Missing required fields"}), 400
 
-        # Save main image
-        main_path = os.path.join(UPLOAD_FOLDER, main_image.filename)
-        main_image.save(main_path)
+        try:
+            # Save main image
+            main_filename = secure_filename(main_image.filename)
+            main_path = os.path.join(app.config["UPLOAD_FOLDER"], main_filename)
+            main_image.save(main_path)
 
-        # Save gallery images
-        gallery_paths = []
-        for file in gallery_files:
-            if file and file.filename:
-                path = os.path.join(UPLOAD_FOLDER, file.filename)
-                file.save(path)
-                gallery_paths.append(path)
+            # Save gallery images
+            gallery_paths = []
+            for file in gallery_files:
+                if file and file.filename:
+                    gallery_filename = secure_filename(file.filename)
+                    gallery_path = os.path.join(app.config["UPLOAD_FOLDER"], gallery_filename)
+                    file.save(gallery_path)
+                    gallery_paths.append(gallery_path)
 
-        # Store product in DB
-        product = {
-            "name": name,
-            "price": price,
-            "main_image": main_path,
-            "gallery": gallery_paths
-        }
-        products.insert_one(product)
-        return jsonify({"status": "Product uploaded", "product": product}), 200
+            # Store product in DB
+            product = {
+                "name": name,
+                "price": price,
+                "main_image": main_path,
+                "gallery": gallery_paths
+            }
+            products.insert_one(product)
+            return jsonify({"status": "Product uploaded", "product": product}), 200
+
+        except Exception as e:
+            return jsonify({"error": f"Upload failed: {str(e)}"}), 500
 
     else:
         try:
