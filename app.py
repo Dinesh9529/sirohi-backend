@@ -3,6 +3,7 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 import os
+import traceback  # ✅ Global import for cleaner exception blocks
 
 # Initialize Flask
 app = Flask(__name__)
@@ -67,8 +68,7 @@ def upload_product():
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
         except Exception as e:
-            import traceback
-            traceback.print_exc()
+            traceback.print_exc()  # ✅ Logs full error in Render console
             return jsonify({"error": f"Upload failed: {str(e)}"}), 500
 
     else:
@@ -76,6 +76,7 @@ def upload_product():
             all_data = list(get_db_collection().find({}, {"_id": 0}))
             return jsonify(all_data)
         except Exception as e:
+            traceback.print_exc()  # ✅ Add traceback here too for GET errors
             return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
