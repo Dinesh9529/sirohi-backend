@@ -17,9 +17,10 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 # ✅ MongoDB lazy client (fork-safe for Gunicorn)
 def get_db_collection():
     client = MongoClient(
-        "mongodb+srv://dineshinfrasofttech:<db_password>@sirohi-cluster.rskoyvc.mongodb.net/?retryWrites=true&w=majority&appName=sirohi-cluster",
-        tlsAllowInvalidCertificates=True
-    )
+    "mongodb+srv://dineshinfrasofttech:<db_password>@sirohi-cluster.rskoyvc.mongodb.net/?retryWrites=true&w=majority&appName=sirohi-cluster",
+    tls=True,
+    tlsAllowInvalidCertificates=True
+)
     db = client["sirohi"]
     return db["products"]
 
