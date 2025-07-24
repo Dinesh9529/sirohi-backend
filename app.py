@@ -3,7 +3,10 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 import os
-import traceback  # ✅ Global import for cleaner exception blocks
+import traceback
+from dotenv import load_dotenv
+
+load_dotenv()  # ✅ Load .env config
 
 # Initialize Flask
 app = Flask(__name__)
@@ -13,14 +16,12 @@ CORS(app)
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # ✅ 16MB upload limit
 
 # ✅ MongoDB lazy client (fork-safe for Gunicorn)
 def get_db_collection():
-    client = MongoClient(
-    "mongodb+srv://dineshinfrasofttech:<db_password>@sirohi-cluster.rskoyvc.mongodb.net/?retryWrites=true&w=majority&appName=sirohi-cluster",
-    tls=True,
-    tlsAllowInvalidCertificates=True
-)
+    uri = os.getenv("MONGO_URI")
+    client = MongoClient(uri, tls=True, tlsAllowInvalidCertificates=True)
     db = client["sirohi"]
     return db["products"]
 
@@ -69,7 +70,7 @@ def upload_product():
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
         except Exception as e:
-            traceback.print_exc()  # ✅ Logs full error in Render console
+            traceback.print_exc()
             return jsonify({"error": f"Upload failed: {str(e)}"}), 500
 
     else:
@@ -77,7 +78,7 @@ def upload_product():
             all_data = list(get_db_collection().find({}, {"_id": 0}))
             return jsonify(all_data)
         except Exception as e:
-            traceback.print_exc()  # ✅ Add traceback here too for GET errors
+            traceback.print_exc()
             return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
