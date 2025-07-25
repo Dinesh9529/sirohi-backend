@@ -1,3 +1,6 @@
+# == Sirohi Backend ==
+# Description: Flask + MongoDB + Media Upload API with Gallery Support
+
 beautifulsoup4==4.13.4
 blinker==1.8.2
 cachetools==5.5.2
@@ -33,9 +36,12 @@ zipp==3.20.2
 gunicorn
 flask-cors==3.0.10
 pymongo==4.7.2
+<<<<<<< HEAD
 ## Sirohi Backend
 Flask + MongoDB + Media Upload API with Gallery Support
 
 
 
 
+=======
+>>>>>>> 1e9dd23 (Complete backend structure with dependencies)
