@@ -33,6 +33,9 @@ zipp==3.20.2
 gunicorn
 flask-cors==3.0.10
 pymongo==4.7.2
+## Sirohi Backend
+Flask + MongoDB + Media Upload API with Gallery Support
+
 
 
 
