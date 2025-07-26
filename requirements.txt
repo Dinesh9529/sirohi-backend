@@ -37,3 +37,5 @@ gunicorn==21.2.0
 flask-cors==3.0.10
 pymongo==4.7.2
 python-dotenv==1.0.1
+flask-cors
+
