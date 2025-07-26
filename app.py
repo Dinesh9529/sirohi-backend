@@ -12,9 +12,15 @@ CORS(app)
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB file size limit
+app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024  # 25 MB limit
 
-# 🔐 MongoDB client with TLS settings (Direct URI — replace <username>:<password>)
+# ✅ Allowed extensions
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# 🔐 MongoDB client with TLS settings
 def get_db_collection():
     uri = "mongodb+srv://<username>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority&tls=true"
     client = MongoClient(
@@ -56,11 +62,21 @@ def upload_product():
             # 🖼️ Save gallery images
             gallery_paths = []
             for file in gallery_files:
-                if file and file.filename:
-                    gallery_filename = secure_filename(file.filename)
-                    gallery_path = os.path.join(app.config["UPLOAD_FOLDER"], gallery_filename)
-                    file.save(gallery_path)
-                    gallery_paths.append(gallery_path)
+                if file and file.filename.strip():
+                    print("Gallery file received:", file.filename)
+                    if allowed_file(file.filename):
+                        gallery_filename = secure_filename(file.filename)
+                        gallery_path = os.path.join(app.config["UPLOAD_FOLDER"], gallery_filename)
+                        try:
+                            file.save(gallery_path)
+                            gallery_paths.append(gallery_path)
+                            print("Saved gallery file:", gallery_path)
+                        except Exception as e:
+                            print("Gallery file save error:", file.filename, "->", str(e))
+                    else:
+                        print("Invalid file type skipped:", file.filename)
+                else:
+                    print("Empty or missing gallery file skipped")
 
             # 🧾 Store product in DB
             product = {
@@ -69,10 +85,13 @@ def upload_product():
                 "main_image": main_path,
                 "gallery": gallery_paths
             }
-            get_db_collection().insert_one(product)
+            res = get_db_collection().insert_one(product)
+            print("Inserted product ID:", res.inserted_id)
+
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
         except Exception:
+            print("Upload error:")
             traceback.print_exc()
             return jsonify({"error": "Upload failed"}), 500
 
@@ -81,6 +100,7 @@ def upload_product():
             all_data = list(get_db_collection().find({}, {"_id": 0}))
             return jsonify(all_data)
         except Exception:
+            print("DB fetch error:")
             traceback.print_exc()
             return jsonify({"error": "DB fetch failed"}), 500
 
