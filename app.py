@@ -4,10 +4,6 @@ from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 import os
 import traceback
-from dotenv import load_dotenv
-
-# ✅ Load environment variables from .env
-load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -18,9 +14,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB file size limit
 
-# 🔐 MongoDB client with TLS settings
+# 🔐 MongoDB client with TLS settings (Direct URI — replace <username>:<password>)
 def get_db_collection():
-    uri = os.getenv("MONGO_URI")
+    uri = "mongodb+srv://<username>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority&tls=true"
     client = MongoClient(
         uri,
         tls=True,
