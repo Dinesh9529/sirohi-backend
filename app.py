@@ -6,22 +6,29 @@ import os
 import traceback
 from dotenv import load_dotenv
 
-load_dotenv()  # ✅ Load .env config
+# ✅ Load environment variables from .env
+load_dotenv()
 
-# Initialize Flask
 app = Flask(__name__)
 CORS(app)
 
-# Upload folder config
+# 📂 Upload folder setup
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # ✅ 16MB upload limit
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB file size limit
 
-# ✅ MongoDB lazy client (fork-safe for Gunicorn)
+# 🔐 MongoDB client with TLS settings
 def get_db_collection():
     uri = os.getenv("MONGO_URI")
-    client = MongoClient(uri, tls=True, tlsAllowInvalidCertificates=True)
+    client = MongoClient(
+        uri,
+        tls=True,
+        tlsAllowInvalidCertificates=True,
+        serverSelectionTimeoutMS=5000,
+        connectTimeoutMS=10000,
+        socketTimeoutMS=10000
+    )
     db = client["sirohi"]
     return db["products"]
 
@@ -45,12 +52,12 @@ def upload_product():
             return jsonify({"error": "Missing required fields"}), 400
 
         try:
-            # Save main image
+            # 🖼️ Save main image
             main_filename = secure_filename(main_image.filename)
             main_path = os.path.join(app.config["UPLOAD_FOLDER"], main_filename)
             main_image.save(main_path)
 
-            # Save gallery images
+            # 🖼️ Save gallery images
             gallery_paths = []
             for file in gallery_files:
                 if file and file.filename:
@@ -59,7 +66,7 @@ def upload_product():
                     file.save(gallery_path)
                     gallery_paths.append(gallery_path)
 
-            # Store product in DB
+            # 🧾 Store product in DB
             product = {
                 "name": name,
                 "price": price,
@@ -69,17 +76,16 @@ def upload_product():
             get_db_collection().insert_one(product)
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
-            return jsonify({"error": f"Upload failed: {str(e)}"}), 500
+            return jsonify({"error": "Upload failed"}), 500
 
     else:
         try:
             all_data = list(get_db_collection().find({}, {"_id": 0}))
             return jsonify(all_data)
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
-            return jsonify({"error": str(e)}), 500
+            return jsonify({"error": "DB fetch failed"}), 500
 
-if __name__ == "__main__":
-    app.run()
+# ⛔️ No app.run() needed for deployment (Gunicorn handles it)

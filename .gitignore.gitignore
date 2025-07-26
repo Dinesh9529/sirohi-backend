@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 __pycache__/
 *.pyc
 .env.txt
 *.env
 
+=======
+__pycache__/
+*.pyc
+.env.txt
+*.env
+
+>>>>>>> 1e9dd23 (Complete backend structure with dependencies)
