@@ -105,3 +105,10 @@ def upload_product():
             return jsonify({"error": "DB fetch failed"}), 500
 
 # ⛔️ No app.run() needed for deployment (Gunicorn handles it)
+
+import os
+from pymongo import MongoClient
+
+uri = os.environ.get("DB_URL")
+client = MongoClient(uri)
+
