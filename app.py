@@ -22,7 +22,16 @@ def allowed_file(filename):
 
 # 🔐 MongoDB client (Standard URI from environment)
 def get_db_collection():
-    uri = os.environ.get("DB_URL")  # ✔️ Get URI from Render environment
+    import os
+    from pymongo import MongoClient
+
+    uri = os.environ.get("DB_URL")
+
+    if not uri or not uri.startswith("mongodb"):
+        raise ValueError(f"❌ Invalid MongoDB URI: {repr(uri)}")
+
+    print("✅ MongoDB URI loaded:", repr(uri))  # Debug print
+
     client = MongoClient(
         uri,
         tls=True,
@@ -33,6 +42,7 @@ def get_db_collection():
     )
     db = client["sirohi"]
     return db["products"]
+
 
 @app.route("/")
 def home():
