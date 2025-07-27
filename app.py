@@ -12,14 +12,12 @@ CORS(app)
 
 logging.basicConfig(level=logging.INFO)
 
-# 🔒 Redirect HTTP to HTTPS
 @app.before_request
 def redirect_to_https():
     if request.headers.get("X-Forwarded-Proto", "http") == "http":
         url = request.url.replace("http://", "https://", 1)
         return redirect(url, code=301)
 
-# 📂 Upload folder setup
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -30,7 +28,14 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# 🔐 MongoDB connector
+def save_file(file):
+    if not file or not allowed_file(file.filename):
+        return ""
+    filename = secure_filename(file.filename)
+    path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    file.save(path)
+    return f"/uploads/{filename}"
+
 def get_db_collection():
     uri = os.environ.get("DB_URL")
     if not uri or not uri.startswith("mongodb"):
@@ -80,30 +85,19 @@ def upload_product():
         if not name or not price or not main_image:
             return jsonify({"error": "Missing required fields"}), 400
 
-        if not allowed_file(main_image.filename):
-            return jsonify({"error": "Main image type not allowed"}), 400
-
         try:
             price = float(price)
         except ValueError:
             return jsonify({"error": "Invalid price format"}), 400
 
         try:
-            main_filename = secure_filename(main_image.filename)
-            main_image.save(os.path.join(app.config["UPLOAD_FOLDER"], main_filename))
-
-            gallery_urls = []
-            for file in gallery_files:
-                if file and file.filename.strip():
-                    if allowed_file(file.filename):
-                        gallery_filename = secure_filename(file.filename)
-                        file.save(os.path.join(app.config["UPLOAD_FOLDER"], gallery_filename))
-                        gallery_urls.append(f"/uploads/{gallery_filename}")
+            main_url = save_file(main_image)
+            gallery_urls = [save_file(f) for f in gallery_files if f and f.filename.strip()]
 
             product = {
                 "name": name,
                 "price": price,
-                "main_image_url": f"/uploads/{main_filename}",
+                "main_image_url": main_url,
                 "gallery_urls": gallery_urls
             }
 
