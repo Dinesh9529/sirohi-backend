@@ -3,10 +3,13 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 import os
+import logging
 import traceback
 
 app = Flask(__name__)
 CORS(app)
+
+logging.basicConfig(level=logging.INFO)
 
 # 🔒 Redirect HTTP to HTTPS
 @app.before_request
@@ -19,27 +22,24 @@ def redirect_to_https():
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024  # 25 MB limit
+app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024  # 25 MB
 
-# ✅ Allowed extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# 🔐 MongoDB client (Standard URI from environment)
+# 🔐 MongoDB connector
 def get_db_collection():
     uri = os.environ.get("DB_URL")
     if not uri or not uri.startswith("mongodb"):
         raise ValueError(f"❌ Invalid MongoDB URI: {repr(uri)}")
 
-    print("✅ MongoDB URI loaded:", repr(uri))
+    logging.info("✅ MongoDB URI loaded: %s", repr(uri))
 
-    client = MongoClient(uri),
-        # 🔐 अब सही cert verify होगा
-        serverSelectionTimeoutMS=10000,
-        connectTimeoutMS=10000,
-        socketTimeoutMS=10000
+    client = MongoClient(
+        uri,
+        serverSelectionTimeoutMS=10000  # Ensure timeout is cleanly defined
     )
     db = client["sirohi"]
     return db["products"]
@@ -50,6 +50,9 @@ def home():
 
 @app.route("/uploads/<filename>")
 def serve_file(filename):
+    # Security: serve only allowed extensions
+    if not allowed_file(filename):
+        return jsonify({"error": "Invalid file type"}), 403
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 @app.route("/ping-db")
@@ -58,11 +61,15 @@ def ping_db():
         get_db_collection().find_one()
         return jsonify({"status": "MongoDB Connected ✅"})
     except Exception as e:
+        logging.error("Ping DB Error: %s", str(e), exc_info=True)
         return jsonify({"error": str(e)})
 
 @app.route("/api/products", methods=["GET", "POST"])
 def upload_product():
     if request.method == "POST":
+        if request.content_type is None or "multipart/form-data" not in request.content_type:
+            return jsonify({"error": "Invalid content-type"}), 400
+
         name = request.form.get("name")
         price = request.form.get("price")
         main_image = request.files.get("image")
@@ -70,6 +77,14 @@ def upload_product():
 
         if not name or not price or not main_image:
             return jsonify({"error": "Missing required fields"}), 400
+
+        if not allowed_file(main_image.filename):
+            return jsonify({"error": "Main image type not allowed"}), 400
+
+        try:
+            price = float(price)
+        except ValueError:
+            return jsonify({"error": "Invalid price format"}), 400
 
         try:
             main_filename = secure_filename(main_image.filename)
@@ -94,8 +109,7 @@ def upload_product():
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
         except Exception as e:
-            print("Upload error:", str(e))
-            traceback.print_exc()
+            logging.error("Upload failed: %s", str(e), exc_info=True)
             return jsonify({"error": "Upload failed", "details": str(e)}), 500
 
     else:
@@ -103,6 +117,5 @@ def upload_product():
             products = list(get_db_collection().find({}, {"_id": 0}))
             return jsonify(products)
         except Exception as e:
-            print("DB fetch error:", str(e))
-            traceback.print_exc()
+            logging.error("DB fetch failed: %s", str(e), exc_info=True)
             return jsonify({"error": "DB fetch failed", "details": str(e)}), 500
