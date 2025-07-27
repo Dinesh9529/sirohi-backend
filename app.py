@@ -52,6 +52,15 @@ def home():
 def serve_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
+    @app.route("/ping-db")
+def ping_db():
+    try:
+        get_db_collection().find_one()
+        return jsonify({"status": "MongoDB Connected ✅"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 @app.route("/api/products", methods=["GET", "POST"])
 def upload_product():
     if request.method == "POST":
