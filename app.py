@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
@@ -7,6 +7,13 @@ import traceback
 
 app = Flask(__name__)
 CORS(app)
+
+# 🔒 Redirect HTTP to HTTPS
+@app.before_request
+def redirect_to_https():
+    if request.headers.get("X-Forwarded-Proto", "http") == "http":
+        url = request.url.replace("http://", "https://", 1)
+        return redirect(url, code=301)
 
 # 📂 Upload folder setup
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
@@ -22,16 +29,10 @@ def allowed_file(filename):
 
 # 🔐 MongoDB client (Standard URI from environment)
 def get_db_collection():
-    import os
-    from pymongo import MongoClient
-
     uri = os.environ.get("DB_URL")
-
     if not uri or not uri.startswith("mongodb"):
         raise ValueError(f"❌ Invalid MongoDB URI: {repr(uri)}")
-
-    print("✅ MongoDB URI loaded:", repr(uri))  # Debug print
-
+    print("✅ MongoDB URI loaded:", repr(uri))
     client = MongoClient(
         uri,
         tls=True,
@@ -43,7 +44,6 @@ def get_db_collection():
     db = client["sirohi"]
     return db["products"]
 
-
 @app.route("/")
 def home():
     return "Sirohi backend is alive 🔥"
@@ -52,14 +52,13 @@ def home():
 def serve_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
-    @app.route("/ping-db")
+@app.route("/ping-db")
 def ping_db():
     try:
         get_db_collection().find_one()
         return jsonify({"status": "MongoDB Connected ✅"})
     except Exception as e:
         return jsonify({"error": str(e)})
-
 
 @app.route("/api/products", methods=["GET", "POST"])
 def upload_product():
@@ -73,11 +72,9 @@ def upload_product():
             return jsonify({"error": "Missing required fields"}), 400
 
         try:
-            # 🖼️ Save main image
             main_filename = secure_filename(main_image.filename)
             main_image.save(os.path.join(app.config["UPLOAD_FOLDER"], main_filename))
 
-            # 🖼️ Save gallery images
             gallery_urls = []
             for file in gallery_files:
                 if file and file.filename.strip():
@@ -86,7 +83,6 @@ def upload_product():
                         file.save(os.path.join(app.config["UPLOAD_FOLDER"], gallery_filename))
                         gallery_urls.append(f"/uploads/{gallery_filename}")
 
-            # 🧾 Store product in DB
             product = {
                 "name": name,
                 "price": price,
