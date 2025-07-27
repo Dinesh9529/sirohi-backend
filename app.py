@@ -35,10 +35,8 @@ def get_db_collection():
 
     print("✅ MongoDB URI loaded:", repr(uri))
 
-    client = MongoClient(
-        uri,
-        tls=True,
-        tlsAllowInvalidCertificates=False,  # 🔐 अब सही cert verify होगा
+    client = MongoClient(uri),
+        # 🔐 अब सही cert verify होगा
         serverSelectionTimeoutMS=10000,
         connectTimeoutMS=10000,
         socketTimeoutMS=10000
