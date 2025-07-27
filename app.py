@@ -20,16 +20,16 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# 🔐 MongoDB client with standard URI from environment
+# 🔐 MongoDB client (Standard URI from environment)
 def get_db_collection():
-    uri = os.environ.get("DB_URL")
+    uri = os.environ.get("DB_URL")  # ✔️ Get URI from Render environment
     client = MongoClient(
         uri,
+        tls=True,
+        tlsAllowInvalidCertificates=True,
         serverSelectionTimeoutMS=5000,
         connectTimeoutMS=10000,
-        socketTimeoutMS=10000,
-        tls=True,
-        tlsAllowInvalidCertificates=True
+        socketTimeoutMS=10000
     )
     db = client["sirohi"]
     return db["products"]
@@ -63,9 +63,9 @@ def upload_product():
             for file in gallery_files:
                 if file and file.filename.strip():
                     if allowed_file(file.filename):
-                        filename = secure_filename(file.filename)
-                        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-                        gallery_urls.append(f"/uploads/{filename}")
+                        gallery_filename = secure_filename(file.filename)
+                        file.save(os.path.join(app.config["UPLOAD_FOLDER"], gallery_filename))
+                        gallery_urls.append(f"/uploads/{gallery_filename}")
 
             # 🧾 Store product in DB
             product = {
@@ -74,7 +74,8 @@ def upload_product():
                 "main_image_url": f"/uploads/{main_filename}",
                 "gallery_urls": gallery_urls
             }
-            res = get_db_collection().insert_one(product)
+            get_db_collection().insert_one(product)
+
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
         except Exception as e:
