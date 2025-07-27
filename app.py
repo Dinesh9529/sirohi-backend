@@ -32,12 +32,14 @@ def get_db_collection():
     uri = os.environ.get("DB_URL")
     if not uri or not uri.startswith("mongodb"):
         raise ValueError(f"❌ Invalid MongoDB URI: {repr(uri)}")
+
     print("✅ MongoDB URI loaded:", repr(uri))
+
     client = MongoClient(
         uri,
         tls=True,
-        tlsAllowInvalidCertificates=True,
-        serverSelectionTimeoutMS=5000,
+        tlsAllowInvalidCertificates=False,  # 🔐 अब सही cert verify होगा
+        serverSelectionTimeoutMS=10000,
         connectTimeoutMS=10000,
         socketTimeoutMS=10000
     )
