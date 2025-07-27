@@ -107,9 +107,9 @@ def upload_product():
                 "gallery_urls": gallery_urls
             }
 
-            # ✅ Updated write concern usage
             collection = get_db_collection().with_options(write_concern=WriteConcern("majority"))
-            collection.insert_one(product)
+            result = collection.insert_one(product)
+            product["_id"] = str(result.inserted_id)
 
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
@@ -119,7 +119,10 @@ def upload_product():
 
     else:
         try:
-            products = list(get_db_collection().find({}, {"_id": 0}))
+            products = []
+            for item in get_db_collection().find():
+                item["_id"] = str(item["_id"])
+                products.append(item)
             return jsonify(products)
         except Exception as e:
             logging.error("DB fetch failed: %s", str(e), exc_info=True)
