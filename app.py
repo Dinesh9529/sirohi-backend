@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 from pymongo import MongoClient
+from pymongo.write_concern import WriteConcern
 from werkzeug.utils import secure_filename
 import os
 import logging
@@ -38,12 +39,11 @@ def get_db_collection():
     logging.info("✅ MongoDB URI loaded: %s", repr(uri))
 
     client = MongoClient(
-    uri,
-    tls=True,
-    tlsAllowInvalidCertificates=True,  # temporarily allow invalid certs
-    serverSelectionTimeoutMS=10000
-)
-
+        uri,
+        tls=True,
+        tlsAllowInvalidCertificates=True,
+        serverSelectionTimeoutMS=10000
+    )
     db = client["sirohi"]
     return db["products"]
 
@@ -53,7 +53,6 @@ def home():
 
 @app.route("/uploads/<filename>")
 def serve_file(filename):
-    # Security: serve only allowed extensions
     if not allowed_file(filename):
         return jsonify({"error": "Invalid file type"}), 403
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
@@ -107,7 +106,10 @@ def upload_product():
                 "main_image_url": f"/uploads/{main_filename}",
                 "gallery_urls": gallery_urls
             }
-            get_db_collection().insert_one(product)
+
+            # ✅ Updated write concern usage
+            collection = get_db_collection().with_options(write_concern=WriteConcern("majority"))
+            collection.insert_one(product)
 
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
