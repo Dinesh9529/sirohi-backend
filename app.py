@@ -20,9 +20,9 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# 🔐 MongoDB client with TLS settings
+# 🔐 MongoDB client (Standard URI from environment)
 def get_db_collection():
-    uri = "mongodb+srv://<username>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority&tls=true"
+    uri = os.environ.get("DB_URL")
     client = MongoClient(
         uri,
         tls=True,
@@ -63,20 +63,11 @@ def upload_product():
             gallery_paths = []
             for file in gallery_files:
                 if file and file.filename.strip():
-                    print("Gallery file received:", file.filename)
                     if allowed_file(file.filename):
                         gallery_filename = secure_filename(file.filename)
                         gallery_path = os.path.join(app.config["UPLOAD_FOLDER"], gallery_filename)
-                        try:
-                            file.save(gallery_path)
-                            gallery_paths.append(gallery_path)
-                            print("Saved gallery file:", gallery_path)
-                        except Exception as e:
-                            print("Gallery file save error:", file.filename, "->", str(e))
-                    else:
-                        print("Invalid file type skipped:", file.filename)
-                else:
-                    print("Empty or missing gallery file skipped")
+                        file.save(gallery_path)
+                        gallery_paths.append(gallery_path)
 
             # 🧾 Store product in DB
             product = {
@@ -86,12 +77,9 @@ def upload_product():
                 "gallery": gallery_paths
             }
             res = get_db_collection().insert_one(product)
-            print("Inserted product ID:", res.inserted_id)
-
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
         except Exception:
-            print("Upload error:")
             traceback.print_exc()
             return jsonify({"error": "Upload failed"}), 500
 
@@ -100,15 +88,5 @@ def upload_product():
             all_data = list(get_db_collection().find({}, {"_id": 0}))
             return jsonify(all_data)
         except Exception:
-            print("DB fetch error:")
             traceback.print_exc()
             return jsonify({"error": "DB fetch failed"}), 500
-
-# ⛔️ No app.run() needed for deployment (Gunicorn handles it)
-
-import os
-from pymongo import MongoClient
-
-uri = os.environ.get("DB_URL")
-client = MongoClient(uri)
-
