@@ -38,9 +38,12 @@ def get_db_collection():
     logging.info("✅ MongoDB URI loaded: %s", repr(uri))
 
     client = MongoClient(
-        uri,
-        serverSelectionTimeoutMS=10000  # Ensure timeout is cleanly defined
-    )
+    uri,
+    tls=True,
+    tlsAllowInvalidCertificates=True,  # temporarily allow invalid certs
+    serverSelectionTimeoutMS=10000
+)
+
     db = client["sirohi"]
     return db["products"]
 
