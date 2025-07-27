@@ -20,16 +20,16 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# 🔐 MongoDB client (Standard URI from environment)
+# 🔐 MongoDB client with standard URI from environment
 def get_db_collection():
     uri = os.environ.get("DB_URL")
     client = MongoClient(
         uri,
-        tls=True,
-        tlsAllowInvalidCertificates=True,
         serverSelectionTimeoutMS=5000,
         connectTimeoutMS=10000,
-        socketTimeoutMS=10000
+        socketTimeoutMS=10000,
+        tls=True,
+        tlsAllowInvalidCertificates=True
     )
     db = client["sirohi"]
     return db["products"]
@@ -56,37 +56,37 @@ def upload_product():
         try:
             # 🖼️ Save main image
             main_filename = secure_filename(main_image.filename)
-            main_path = os.path.join(app.config["UPLOAD_FOLDER"], main_filename)
-            main_image.save(main_path)
+            main_image.save(os.path.join(app.config["UPLOAD_FOLDER"], main_filename))
 
             # 🖼️ Save gallery images
-            gallery_paths = []
+            gallery_urls = []
             for file in gallery_files:
                 if file and file.filename.strip():
                     if allowed_file(file.filename):
-                        gallery_filename = secure_filename(file.filename)
-                        gallery_path = os.path.join(app.config["UPLOAD_FOLDER"], gallery_filename)
-                        file.save(gallery_path)
-                        gallery_paths.append(gallery_path)
+                        filename = secure_filename(file.filename)
+                        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+                        gallery_urls.append(f"/uploads/{filename}")
 
             # 🧾 Store product in DB
             product = {
                 "name": name,
                 "price": price,
-                "main_image": main_path,
-                "gallery": gallery_paths
+                "main_image_url": f"/uploads/{main_filename}",
+                "gallery_urls": gallery_urls
             }
             res = get_db_collection().insert_one(product)
             return jsonify({"status": "Product uploaded", "product": product}), 200
 
-        except Exception:
+        except Exception as e:
+            print("Upload error:", str(e))
             traceback.print_exc()
-            return jsonify({"error": "Upload failed"}), 500
+            return jsonify({"error": "Upload failed", "details": str(e)}), 500
 
     else:
         try:
-            all_data = list(get_db_collection().find({}, {"_id": 0}))
-            return jsonify(all_data)
-        except Exception:
+            products = list(get_db_collection().find({}, {"_id": 0}))
+            return jsonify(products)
+        except Exception as e:
+            print("DB fetch error:", str(e))
             traceback.print_exc()
-            return jsonify({"error": "DB fetch failed"}), 500
+            return jsonify({"error": "DB fetch failed", "details": str(e)}), 500
