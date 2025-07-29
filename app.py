@@ -79,6 +79,7 @@ def upload_product():
 
         name = request.form.get("name")
         price = request.form.get("price")
+        vendor_id = request.form.get("vendor_id") or None  # ✅ vendor_id support
         main_image = request.files.get("image")
         gallery_files = request.files.getlist("gallery_images")
 
@@ -98,7 +99,8 @@ def upload_product():
                 "name": name,
                 "price": price,
                 "main_image_url": main_url,
-                "gallery_urls": gallery_urls
+                "gallery_urls": gallery_urls,
+                "vendor_id": vendor_id  # ✅ added to DB
             }
 
             collection = get_db_collection().with_options(write_concern=WriteConcern("majority"))
@@ -113,8 +115,11 @@ def upload_product():
 
     else:
         try:
+            vendor_filter = request.args.get("vendor_id")
+            query = {"vendor_id": vendor_filter} if vendor_filter else {}
+
             products = []
-            for item in get_db_collection().find():
+            for item in get_db_collection().find(query):
                 item["_id"] = str(item["_id"])
                 products.append(item)
             return jsonify(products)
