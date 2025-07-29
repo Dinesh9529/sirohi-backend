@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, redirect
+from flask import Flask, request, jsonify, send_from_directory, redirect, session
 from flask_cors import CORS
 from pymongo import MongoClient
 from pymongo.write_concern import WriteConcern
@@ -8,6 +8,7 @@ import logging
 import traceback
 
 app = Flask(__name__)
+app.secret_key = 'sirohi_secret_key'  # ✅ session setup
 CORS(app)
 
 logging.basicConfig(level=logging.INFO)
@@ -26,7 +27,7 @@ app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024  # 25 MB
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit(1)[1].lower() in ALLOWED_EXTENSIONS
 
 def save_file(file):
     if not file or not allowed_file(file.filename):
@@ -71,6 +72,27 @@ def ping_db():
         logging.error("Ping DB Error: %s", str(e), exc_info=True)
         return jsonify({"error": str(e)})
 
+# ✅ New: Vendor Panel Product Fetch Route (Session-based)
+@app.route('/vendor/products', methods=['GET'])
+def vendor_products():
+    vendor_id = session.get('vendor_id')
+    if not vendor_id:
+        return jsonify({"error": "Vendor not logged in"}), 401
+
+    try:
+        products = []
+        cursor = get_db_collection().find(
+            {"vendor_id": vendor_id},
+            {"_id": 0, "vendor_id": 0}  # Privacy filter
+        )
+        for item in cursor:
+            products.append(item)
+        return jsonify({"products": products})
+    except Exception as e:
+        logging.error("Vendor product fetch failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Failed to fetch vendor products"}), 500
+
+# Existing Upload + GET Route
 @app.route("/api/products", methods=["GET", "POST"])
 def upload_product():
     if request.method == "POST":
@@ -79,7 +101,7 @@ def upload_product():
 
         name = request.form.get("name")
         price = request.form.get("price")
-        vendor_id = request.form.get("vendor_id") or None  # ✅ vendor_id support
+        vendor_id = request.form.get("vendor_id") or session.get("vendor_id")
         main_image = request.files.get("image")
         gallery_files = request.files.getlist("gallery_images")
 
@@ -100,7 +122,7 @@ def upload_product():
                 "price": price,
                 "main_image_url": main_url,
                 "gallery_urls": gallery_urls,
-                "vendor_id": vendor_id  # ✅ added to DB
+                "vendor_id": vendor_id
             }
 
             collection = get_db_collection().with_options(write_concern=WriteConcern("majority"))
