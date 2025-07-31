@@ -166,3 +166,22 @@ def upload_product():
         except Exception as e:
             logging.error("DB fetch failed: %s", str(e), exc_info=True)
             return jsonify({"error": "DB fetch failed", "details": str(e)}), 500
+
+@app.route("/api/service-products", methods=["GET"])
+def service_products():
+    category = request.args.get("category")
+    if not category:
+        return jsonify({"error": "Category required"}), 400
+
+    try:
+        products = []
+        cursor = get_db_collection().find(
+            {"category": category},
+            {"_id": 0, "vendor_id": 0}
+        )
+        for item in cursor:
+            products.append(item)
+        return jsonify({"products": products})
+    except Exception as e:
+        logging.error("Service products fetch failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Service fetch failed", "details": str(e)}), 500
