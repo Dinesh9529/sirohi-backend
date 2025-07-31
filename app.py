@@ -8,7 +8,7 @@ import logging
 import traceback
 
 app = Flask(__name__)
-app.secret_key = 'sirohi_secret_key'  # ✅ session setup
+app.secret_key = 'sirohi_secret_key'
 CORS(app)
 
 logging.basicConfig(level=logging.INFO)
@@ -27,7 +27,7 @@ app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024  # 25 MB
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit(1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def save_file(file):
     if not file or not allowed_file(file.filename):
@@ -72,7 +72,6 @@ def ping_db():
         logging.error("Ping DB Error: %s", str(e), exc_info=True)
         return jsonify({"error": str(e)})
 
-# ✅ New: Vendor Panel Product Fetch Route (Session-based)
 @app.route('/vendor/products', methods=['GET'])
 def vendor_products():
     vendor_id = session.get('vendor_id')
@@ -83,7 +82,7 @@ def vendor_products():
         products = []
         cursor = get_db_collection().find(
             {"vendor_id": vendor_id},
-            {"_id": 0, "vendor_id": 0}  # Privacy filter
+            {"_id": 0, "vendor_id": 0}
         )
         for item in cursor:
             products.append(item)
@@ -92,7 +91,6 @@ def vendor_products():
         logging.error("Vendor product fetch failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Failed to fetch vendor products"}), 500
 
-# Existing Upload + GET Route
 @app.route("/api/products", methods=["GET", "POST"])
 def upload_product():
     if request.method == "POST":
@@ -102,16 +100,34 @@ def upload_product():
         name = request.form.get("name")
         price = request.form.get("price")
         vendor_id = request.form.get("vendor_id") or session.get("vendor_id")
+        category = request.form.get("category")
         main_image = request.files.get("image")
         gallery_files = request.files.getlist("gallery_images")
 
-        if not name or not price or not main_image:
+        if not name or not price or not main_image or not category:
             return jsonify({"error": "Missing required fields"}), 400
 
         try:
             price = float(price)
         except ValueError:
             return jsonify({"error": "Invalid price format"}), 400
+
+        # Category-specific fields
+        extra_fields = {}
+        if category == "kirana":
+            weight = request.form.get("weight")
+            try:
+                extra_fields["weight"] = float(weight) if weight else None
+            except ValueError:
+                return jsonify({"error": "Invalid weight value"}), 400
+
+        elif category == "kapda":
+            extra_fields["size"] = request.form.get("size")
+            try:
+                extra_fields["waist"] = int(request.form.get("waist")) if request.form.get("waist") else None
+                extra_fields["length"] = int(request.form.get("length")) if request.form.get("length") else None
+            except ValueError:
+                return jsonify({"error": "Invalid size values"}), 400
 
         try:
             main_url = save_file(main_image)
@@ -122,7 +138,9 @@ def upload_product():
                 "price": price,
                 "main_image_url": main_url,
                 "gallery_urls": gallery_urls,
-                "vendor_id": vendor_id
+                "vendor_id": vendor_id,
+                "category": category,
+                **extra_fields
             }
 
             collection = get_db_collection().with_options(write_concern=WriteConcern("majority"))
