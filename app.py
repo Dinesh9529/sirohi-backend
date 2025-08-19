@@ -129,6 +129,23 @@ def upload_product():
             except ValueError:
                 return jsonify({"error": "Invalid size values"}), 400
 
+        # Stock fields
+        stock_data = {}
+        try:
+            stock_qty = request.form.get("stockQty")
+            stock_size = request.form.get("stockSize")
+            stock_liter = request.form.get("stockLiter")
+            stock_kg = request.form.get("stockKg")
+
+            stock_data = {
+                "qty": int(stock_qty) if stock_qty else None,
+                "size": stock_size,
+                "liter": float(stock_liter) if stock_liter else None,
+                "kg": float(stock_kg) if stock_kg else None
+            }
+        except ValueError:
+            return jsonify({"error": "Invalid stock values"}), 400
+
         try:
             main_url = save_file(main_image)
             gallery_urls = [save_file(f) for f in gallery_files if f and f.filename.strip()]
@@ -140,6 +157,7 @@ def upload_product():
                 "gallery_urls": gallery_urls,
                 "vendor_id": vendor_id,
                 "category": category,
+                "stock": stock_data,
                 **extra_fields
             }
 
