@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, redirect, session
+from flask import Flask, request, jsonify, send_from_directory, redirect, session, Blueprint
 from flask_cors import CORS
 from pymongo import MongoClient
 from pymongo.write_concern import WriteConcern
@@ -112,7 +112,6 @@ def upload_product():
         except ValueError:
             return jsonify({"error": "Invalid price format"}), 400
 
-        # Category-specific fields
         extra_fields = {}
         if category == "kirana":
             weight = request.form.get("weight")
@@ -129,7 +128,6 @@ def upload_product():
             except ValueError:
                 return jsonify({"error": "Invalid size values"}), 400
 
-        # Stock fields
         stock_data = {}
         try:
             stock_qty = request.form.get("stockQty")
@@ -203,3 +201,37 @@ def service_products():
     except Exception as e:
         logging.error("Service products fetch failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Service fetch failed", "details": str(e)}), 500
+
+# ✅ Admin Panel Routes (Added Safely Below Existing Code)
+
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+@admin_bp.route('/dashboard')
+def dashboard():
+    return jsonify({
+        "vendors": 42,
+        "orders": 128,
+        "earnings": 56000
+    })
+
+@admin_bp.route('/vendors', methods=['GET'])
+def get_all_vendors():
+    try:
+        db = MongoClient(os.environ.get("DB_URL")).sirohi
+        vendors = list(db.vendors.find({}, {"_id": 0}))
+        return jsonify(vendors)
+    except Exception as e:
+        logging.error("Vendor fetch failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Failed to fetch vendors"}), 500
+
+@admin_bp.route('/approve-vendor/<vendor_id>', methods=['POST'])
+def approve_vendor(vendor_id):
+    try:
+        db = MongoClient(os.environ.get("DB_URL")).sirohi
+        db.vendors.update_one({"_id": vendor_id}, {"$set": {"approved": True}})
+        return jsonify({"status": "Vendor approved"})
+    except Exception as e:
+        logging.error("Vendor approval failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Approval failed"}), 500
+
+@admin_bp.route('/delete-vendor/<vendor_id>',
