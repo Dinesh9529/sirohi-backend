@@ -233,5 +233,13 @@ def approve_vendor(vendor_id):
     except Exception as e:
         logging.error("Vendor approval failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Approval failed"}), 500
-
-@admin_bp.route('/delete-vendor/<vendor_id>',
+@admin_bp.route('/delete-vendor/<vendor_id>', methods=['DELETE'])
+def delete_vendor(vendor_id):
+    try:
+        db = MongoClient(os.environ.get("DB_URL")).sirohi
+        db.vendors.delete_one({"_id": vendor_id})
+        return jsonify({"status": "Vendor deleted"})
+    except Exception as e:
+        logging.error("Vendor delete failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Delete failed"}), 500
+app.register_blueprint(admin_bp)
