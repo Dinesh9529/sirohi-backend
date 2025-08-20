@@ -243,3 +243,108 @@ def delete_vendor(vendor_id):
         logging.error("Vendor delete failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Delete failed"}), 500
 app.register_blueprint(admin_bp)
+
+from bson import ObjectId
+
+@app.route("/api/register-vendor", methods=["POST"])
+def register_vendor():
+    try:
+        data = request.get_json()
+        required = ["name", "category", "price"]
+        if not all(k in data for k in required):
+            return jsonify({"error": "Missing vendor fields"}), 400
+
+        db = MongoClient(os.environ.get("DB_URL")).sirohi
+        vendor = {
+            "name": data["name"],
+            "category": data["category"],
+            "price": data["price"],
+            "approved": False,
+            "created_at": datetime.utcnow()
+        }
+        result = db.vendors.insert_one(vendor)
+        vendor["_id"] = str(result.inserted_id)
+        return jsonify({"status": "Vendor registered", "vendor": vendor})
+    except Exception as e:
+        logging.error("Vendor registration failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Vendor registration failed"}), 500
+
+
+@app.route("/api/register-customer", methods=["POST"])
+def register_customer():
+    try:
+        data = request.get_json()
+        required = ["name", "mobile", "address"]
+        if not all(k in data for k in required):
+            return jsonify({"error": "Missing customer fields"}), 400
+
+        db = MongoClient(os.environ.get("DB_URL")).sirohi
+        customer = {
+            "name": data["name"],
+            "mobile": data["mobile"],
+            "address": data["address"],
+            "created_at": datetime.utcnow()
+        }
+        result = db.customers.insert_one(customer)
+        customer["_id"] = str(result.inserted_id)
+        return jsonify({"status": "Customer registered", "customer": customer})
+    except Exception as e:
+        logging.error("Customer registration failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Customer registration failed"}), 500
+
+
+@app.route("/api/register-delivery", methods=["POST"])
+def register_delivery_boy():
+    try:
+        data = request.get_json()
+        required = ["name", "location", "mobile"]
+        if not all(k in data for k in required):
+            return jsonify({"error": "Missing delivery boy fields"}), 400
+
+        db = MongoClient(os.environ.get("DB_URL")).sirohi
+        delivery = {
+            "name": data["name"],
+            "location": data["location"],
+            "mobile": data["mobile"],
+            "active": True,
+            "created_at": datetime.utcnow()
+        }
+        result = db.delivery.insert_one(delivery)
+        delivery["_id"] = str(result.inserted_id)
+        return jsonify({"status": "Delivery boy registered", "delivery": delivery})
+    except Exception as e:
+        logging.error("Delivery registration failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Delivery registration failed"}), 500
+
+
+@app.route("/api/paid-plans", methods=["GET"])
+def get_paid_plans():
+    try:
+        db = MongoClient(os.environ.get("DB_URL")).sirohi
+        plans = list(db.plans.find({}, {"_id": 0}))
+        return jsonify({"plans": plans})
+    except Exception as e:
+        logging.error("Paid plans fetch failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Failed to fetch plans"}), 500
+
+
+@app.route("/api/subscribe-plan", methods=["POST"])
+def subscribe_plan():
+    try:
+        data = request.get_json()
+        required = ["customer_id", "plan_id"]
+        if not all(k in data for k in required):
+            return jsonify({"error": "Missing subscription fields"}), 400
+
+        db = MongoClient(os.environ.get("DB_URL")).sirohi
+        subscription = {
+            "customer_id": data["customer_id"],
+            "plan_id": data["plan_id"],
+            "subscribed_at": datetime.utcnow()
+        }
+        result = db.subscriptions.insert_one(subscription)
+        subscription["_id"] = str(result.inserted_id)
+        return jsonify({"status": "Plan subscribed", "subscription": subscription})
+    except Exception as e:
+        logging.error("Subscription failed: %s", str(e), exc_info=True)
+        return jsonify({"error": "Subscription failed"}), 500
