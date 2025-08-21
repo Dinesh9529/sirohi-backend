@@ -368,23 +368,6 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 
 
-# ✅ Customer Registration
-@app.route("/api/register-customer", methods=["POST"])
-def register_customer():
-    try:
-        data = request.get_json()
-        customer = {
-            "name": data["name"],
-            "mobile": data["mobile"],
-            "address": data["address"],
-            "created_at": datetime.utcnow()
-        }
-        result = db.customers.insert_one(customer)
-        customer["_id"] = str(result.inserted_id)
-        return jsonify({"status": "Customer registered", "customer": customer})
-    except Exception as e:
-        return jsonify({"error": "Customer registration failed"}), 500
-
 # ✅ Delivery Boy Registration
 @app.route("/api/register-delivery", methods=["POST"])
 def register_delivery():
