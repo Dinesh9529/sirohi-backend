@@ -1,4 +1,3 @@
-Updated upstream
 
 if not os.path.exists("uploads"):
     os.makedirs("uploads")
