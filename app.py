@@ -435,11 +435,17 @@ def upload_product():
     except Exception as e:
         return jsonify({"error": "Product upload failed"}), 500
 
-# ✅ Subscription
 @app.route("/api/subscribe-plan", methods=["POST"])
 def subscribe_plan():
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data received"}), 400
+
+        required_fields = ["customer_id", "plan_id"]
+        if not all(field in data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+
         subscription = {
             "customer_id": data["customer_id"],
             "plan_id": data["plan_id"],
@@ -449,7 +455,9 @@ def subscribe_plan():
         subscription["_id"] = str(result.inserted_id)
         return jsonify({"status": "Plan subscribed", "subscription": subscription})
     except Exception as e:
+        logging.error("Subscription failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Subscription failed"}), 500
+
 
 # ✅ Paid Plans
 @app.route("/api/paid-plans", methods=["GET"])
