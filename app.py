@@ -1,3 +1,9 @@
+Updated upstream
+
+if not os.path.exists("uploads"):
+    os.makedirs("uploads")
+
+Stashed changes
 from flask import Flask, request, jsonify, send_from_directory, redirect, session, Blueprint
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -349,6 +355,13 @@ def subscribe_plan():
         logging.error("Subscription failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Subscription failed"}), 500
 
+<<<<<<< Updated upstream
+=======
+
+
+
+
+>>>>>>> Stashed changes
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
