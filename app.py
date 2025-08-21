@@ -357,7 +357,7 @@ def subscribe_plan():
         logging.error("Subscription failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Subscription failed"}), 500
 
- Updated upstream
+ 
 
 
 
