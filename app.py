@@ -251,7 +251,11 @@ def delete_vendor(vendor_id):
 app.register_blueprint(admin_bp)
 
 from bson import ObjectId
+# ✅ Place this at the top of app.py
+client = MongoClient(os.environ.get("DB_URL"))
+db = client.sirohi
 
+# ✅ Then use this route
 @app.route("/api/register-vendor", methods=["POST"])
 def register_vendor():
     try:
@@ -260,7 +264,6 @@ def register_vendor():
         if not all(k in data for k in required):
             return jsonify({"error": "Missing vendor fields"}), 400
 
-        db = MongoClient(os.environ.get("DB_URL")).sirohi
         vendor = {
             "name": data["name"],
             "category": data["category"],
@@ -355,33 +358,16 @@ def subscribe_plan():
         logging.error("Subscription failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Subscription failed"}), 500
 
-<<<<<<< Updated upstream
-=======
+ Updated upstream
 
 
 
 
->>>>>>> Stashed changes
+
+Stashed changes
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
-# ✅ Vendor Registration
-@app.route("/api/register-vendor", methods=["POST"])
-def register_vendor():
-    try:
-        data = request.get_json()
-        vendor = {
-            "name": data["name"],
-            "category": data["category"],
-            "price": data["price"],
-            "approved": False,
-            "created_at": datetime.utcnow()
-        }
-        result = db.vendors.insert_one(vendor)
-        vendor["_id"] = str(result.inserted_id)
-        return jsonify({"status": "Vendor registered", "vendor": vendor})
-    except Exception as e:
-        return jsonify({"error": "Vendor registration failed"}), 500
 
 # ✅ Customer Registration
 @app.route("/api/register-customer", methods=["POST"])
