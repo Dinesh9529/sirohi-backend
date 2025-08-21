@@ -348,3 +348,114 @@ def subscribe_plan():
     except Exception as e:
         logging.error("Subscription failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Subscription failed"}), 500
+
+from werkzeug.utils import secure_filename
+from datetime import datetime
+
+# ✅ Vendor Registration
+@app.route("/api/register-vendor", methods=["POST"])
+def register_vendor():
+    try:
+        data = request.get_json()
+        vendor = {
+            "name": data["name"],
+            "category": data["category"],
+            "price": data["price"],
+            "approved": False,
+            "created_at": datetime.utcnow()
+        }
+        result = db.vendors.insert_one(vendor)
+        vendor["_id"] = str(result.inserted_id)
+        return jsonify({"status": "Vendor registered", "vendor": vendor})
+    except Exception as e:
+        return jsonify({"error": "Vendor registration failed"}), 500
+
+# ✅ Customer Registration
+@app.route("/api/register-customer", methods=["POST"])
+def register_customer():
+    try:
+        data = request.get_json()
+        customer = {
+            "name": data["name"],
+            "mobile": data["mobile"],
+            "address": data["address"],
+            "created_at": datetime.utcnow()
+        }
+        result = db.customers.insert_one(customer)
+        customer["_id"] = str(result.inserted_id)
+        return jsonify({"status": "Customer registered", "customer": customer})
+    except Exception as e:
+        return jsonify({"error": "Customer registration failed"}), 500
+
+# ✅ Delivery Boy Registration
+@app.route("/api/register-delivery", methods=["POST"])
+def register_delivery():
+    try:
+        data = request.get_json()
+        delivery = {
+            "name": data["name"],
+            "location": data["location"],
+            "mobile": data["mobile"],
+            "active": True,
+            "created_at": datetime.utcnow()
+        }
+        result = db.delivery.insert_one(delivery)
+        delivery["_id"] = str(result.inserted_id)
+        return jsonify({"status": "Delivery boy registered", "delivery": delivery})
+    except Exception as e:
+        return jsonify({"error": "Delivery registration failed"}), 500
+
+# ✅ Product Upload
+@app.route("/api/upload-product", methods=["POST"])
+def upload_product():
+    try:
+        name = request.form["name"]
+        category = request.form["category"]
+        price = float(request.form["price"])
+        vendor_id = request.form["vendor_id"]
+        stock_qty = int(request.form["stockQty"])
+        stock_liter = float(request.form["stockLiter"])
+
+        main_image = request.files["main_image"]
+        filename = secure_filename(main_image.filename)
+        main_image.save(os.path.join("uploads", filename))
+
+        product = {
+            "name": name,
+            "category": category,
+            "price": price,
+            "vendor_id": vendor_id,
+            "main_image_url": f"/uploads/{filename}",
+            "stock": {"qty": stock_qty, "liter": stock_liter},
+            "created_at": datetime.utcnow()
+        }
+        result = db.products.insert_one(product)
+        product["_id"] = str(result.inserted_id)
+        return jsonify({"status": "Product uploaded", "product": product})
+    except Exception as e:
+        return jsonify({"error": "Product upload failed"}), 500
+
+# ✅ Subscription
+@app.route("/api/subscribe-plan", methods=["POST"])
+def subscribe_plan():
+    try:
+        data = request.get_json()
+        subscription = {
+            "customer_id": data["customer_id"],
+            "plan_id": data["plan_id"],
+            "subscribed_at": datetime.utcnow()
+        }
+        result = db.subscriptions.insert_one(subscription)
+        subscription["_id"] = str(result.inserted_id)
+        return jsonify({"status": "Plan subscribed", "subscription": subscription})
+    except Exception as e:
+        return jsonify({"error": "Subscription failed"}), 500
+
+# ✅ Paid Plans
+@app.route("/api/paid-plans", methods=["GET"])
+def get_paid_plans():
+    try:
+        plans = list(db.plans.find({}, {"_id": 0}))
+        return jsonify({"plans": plans})
+    except Exception as e:
+        return jsonify({"error": "Failed to fetch plans"}), 500
