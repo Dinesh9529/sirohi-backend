@@ -1,3 +1,5 @@
+import hmac
+import hashlib
 import os
 if not os.path.exists("uploads"):
     os.makedirs("uploads")
@@ -15,6 +17,7 @@ import traceback
 app = Flask(__name__)
 app.secret_key = 'sirohi_secret_key'
 CORS(app)
+RAZORPAY_WEBHOOK_SECRET = "sirohi_secret_123"  # Razorpay dashboard में जो secret डाला है वही यहाँ डालना
 
 logging.basicConfig(level=logging.INFO)
 
@@ -206,6 +209,41 @@ def service_products():
     except Exception as e:
         logging.error("Service products fetch failed: %s", str(e), exc_info=True)
         return jsonify({"error": "Service fetch failed", "details": str(e)}), 500
+
+
+@app.route('/razorpay/webhook', methods=['POST'])
+def razorpay_webhook():
+    payload = request.data
+    received_signature = request.headers.get('X-Razorpay-Signature')
+
+    generated_signature = hmac.new(
+        bytes(RAZORPAY_WEBHOOK_SECRET, 'utf-8'),
+        msg=payload,
+        digestmod=hashlib.sha256
+    ).hexdigest()
+
+    if hmac.compare_digest(received_signature, generated_signature):
+        data = request.get_json()
+        payment_id = data.get('payload', {}).get('payment', {}).get('entity', {}).get('id')
+        status = data.get('event')
+
+        if status == "payment.captured":
+            print(f"✅ Payment successful: {payment_id}")
+            # TODO: यहाँ order को paid mark करना, stock update करना, vendor को notify करना
+            return jsonify({"status": "success"}), 200
+
+        elif status == "payment.failed":
+            print(f"❌ Payment failed: {payment_id}")
+            # TODO: failure log करना, user को notify करना
+            return jsonify({"status": "failed"}), 200
+
+        else:
+            print(f"⚠️ Unhandled event: {status}")
+            return jsonify({"status": "ignored"}), 200
+    else:
+        print("❌ Signature mismatch — possible fraud")
+        return jsonify({"status": "unauthorized"}), 403
+
 
 # ✅ Admin Panel Routes (Added Safely Below Existing Code)
 
